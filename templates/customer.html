@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>顧客詳細</title>
+</head>
+<body>
+    <h1>顧客ID {{ customer_info.customerid }} の購入履歴</h1>
+    <p>名前: {{ customer_info.lastname }} {{ customer_info.firstname }}</p>
+    <p>年齢: {{ customer_info.age }} / 性別: {{ customer_info.sex }} / 都道府県: {{ customer_info.area }}</p>
+    
+    <div>
+        {{ graph_html|safe }}
+    </div>
+    
+    <a href="/">戻る</a>
+</body>
+</html>

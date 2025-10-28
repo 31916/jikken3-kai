@@ -1,57 +1,55 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import pandas as pd
+import plotly.express as px
+import plotly.io as pio
 import os
 
 app = Flask(__name__)
 
-# --- データパス設定 ---
 DATA_DIR = "data"
 CUST_PATH = os.path.join(DATA_DIR, "cust.csv")
 ORDER_PATH = os.path.join(DATA_DIR, "order.csv")
 
-@app.route("/")
+# --- CSV読み込み（アプリ起動時に1回だけ読み込む） ---
+cust = pd.read_csv(CUST_PATH)
+order = pd.read_csv(ORDER_PATH)
+
+# 列名小文字化
+cust.columns = [c.lower() for c in cust.columns]
+order.columns = [c.lower() for c in order.columns]
+
+# orderdateをdatetime型に変換
+order['orderdate'] = pd.to_datetime(order['orderdate'])
+
+@app.route('/')
 def index():
-    # ===== データ読み込み =====
-    cust = pd.read_csv(CUST_PATH)
-    order = pd.read_csv(ORDER_PATH)
+    return render_template('search.html')
 
-    # 列名を小文字化（安全のため）
-    cust.columns = [c.lower() for c in cust.columns]
-    order.columns = [c.lower() for c in order.columns]
-
-    # ===== 集計処理 =====
-    # 各顧客の購入回数・合計金額・最終注文日
-    summary = (
-        order.groupby("customerid")
-        .agg(
-            purchase_count=("orderdate", "count"),
-            total_spent=("orderprice", "sum"),
-            last_order=("orderdate", "max")
-        )
-        .reset_index()
-    )
-
-    # 顧客情報と結合
-    merged = pd.merge(cust, summary, on="customerid", how="left").fillna(0)
-
-    # 全体のKPI
-    total_customers = merged["customerid"].nunique()
-    total_sales = merged["total_spent"].sum()
-    avg_sales = total_sales / total_customers if total_customers else 0
-
-    # ランキング
-    top_freq = merged.sort_values("purchase_count", ascending=False).head(10)
-    top_spend = merged.sort_values("total_spent", ascending=False).head(10)
-
-    # HTMLへ渡す
-    return render_template(
-        "index.html",
-        total_customers=int(total_customers),
-        total_sales=int(total_sales),
-        avg_sales=int(avg_sales),
-        top_freq=top_freq.to_dict(orient="records"),
-        top_spend=top_spend.to_dict(orient="records"),
-    )
-
-if __name__ == "__main__":
-    app.run(debug=True)
+@app.route('/customer', methods=['POST'])
+def customer():
+    customer_id = request.form.get('customer_id')
+    
+    # 入力チェック
+    if not customer_id.isdigit():
+        return "顧客IDは数字で入力してください"
+    
+    customer_id = int(customer_id)
+    
+    # 該当顧客の注文履歴
+    cust_orders = order[order['customerid'] == customer_id].sort_values('orderdate')
+    
+    if cust_orders.empty:
+        return f"顧客ID {customer_id} の注文履歴はありません"
+    
+    # 時系列棒グラフ作成
+    fig = px.bar(cust_orders, x='orderdate', y='orderprice',
+                 title=f'顧客ID {customer_id} の購入履歴',
+                 labels={'orderdate':'注文日', 'orderprice':'注文金額'})
+    
+    # HTML化
+    graph_html = pio.to_html(fig, full_html=False)
+    
+    # 顧客情報取得
+    customer_info = cust[cust['customerid']==customer_id].to_dict(orient='records')[0]
+    
+    return render_template('customer.html', graph_html=graph_html, customer_info=customer_info)
