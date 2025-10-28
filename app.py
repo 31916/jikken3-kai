@@ -8,7 +8,7 @@ app = Flask(__name__)
 DATA_DIR = "data"
 CUST_PATH = os.path.join(DATA_DIR, "cust.csv")
 ORDER_PATH = os.path.join(DATA_DIR, "order.csv")
-
+print("hello")
 @app.route("/")
 def index():
     # ===== データ読み込み =====
