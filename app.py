@@ -7,6 +7,7 @@ print("cust.csv exists:", os.path.exists(CUST_PATH))
 print("order.csv exists:", os.path.exists(ORDER_PATH))
 
 
+print("start app.py")
 
 from flask import Flask, render_template, request
 import pandas as pd
