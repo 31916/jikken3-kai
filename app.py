@@ -39,10 +39,10 @@ item_summary = (
 # 在庫情報を結合
 item_summary = pd.merge(item_summary, stock, left_on='orderitem', right_on='item', how='left')
 
-# 在庫少ない商品抽出
+# 在庫少ない商品抽出（5以下）
 low_stock_items = item_summary[item_summary['stock'] <= 5].to_dict(orient='records')
 
-# 売上グラフ作成
+# 売上グラフ作成（安定表示用）
 fig = px.bar(
     item_summary.sort_values('total_sales', ascending=False),
     x='orderitem', y='total_sales',
@@ -50,7 +50,7 @@ fig = px.bar(
     title='商品別累計売上ランキング',
     labels={'orderitem':'商品コード', 'total_sales':'累計売上'}
 )
-graph_html = pio.to_html(fig, full_html=False)
+graph_html = pio.to_html(fig, full_html=True, include_plotlyjs='cdn')  # 修正版
 
 # --- ルート ---
 @app.route('/item_analysis')
