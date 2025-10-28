@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import pandas as pd
 import plotly.express as px
 import plotly.io as pio
@@ -8,57 +8,64 @@ app = Flask(__name__)
 
 # --- CSVパス ---
 DATA_DIR = "data"
-ITEM_PATH = os.path.join(DATA_DIR, "item.csv")
-STOCK_PATH = os.path.join(DATA_DIR, "itemstock.csv")
+CUST_PATH = os.path.join(DATA_DIR, "cust.csv")
 ORDER_PATH = os.path.join(DATA_DIR, "order.csv")
 
 # --- CSV読み込み ---
-item = pd.read_csv(ITEM_PATH, encoding='utf-8')
-stock = pd.read_csv(STOCK_PATH, encoding='utf-8')
+cust = pd.read_csv(CUST_PATH, encoding='utf-8')
 order_cols = ['customerid','orderdate','orderno','itemprice','orderitem','orderitemcate','ordernum','orderprice']
 order = pd.read_csv(ORDER_PATH, encoding='utf-8', usecols=order_cols)
 
 # 列名を小文字化
-item.columns = [c.lower() for c in item.columns]
-stock.columns = [c.lower() for c in stock.columns]
+cust.columns = [c.lower() for c in cust.columns]
 order.columns = [c.lower() for c in order.columns]
-
-# orderdate を datetime 型に変換
 order['orderdate'] = pd.to_datetime(order['orderdate'])
 
-# --- 商品集計 ---
-item_summary = (
-    order.groupby(['orderitem', 'orderitemcate'])
-    .agg(
-        total_sales=('orderprice', 'sum'),
-        order_count=('orderno', 'count')
+# --- トップページ ---
+@app.route('/')
+def index():
+    return render_template('search.html')
+
+# --- 顧客ID検索 ---
+@app.route('/customer', methods=['POST'])
+def customer():
+    customer_id = request.form.get('customer_id')
+    
+    if not customer_id:
+        return "顧客IDを入力してください"
+    
+    # 該当顧客の注文履歴
+    cust_orders = order[order['customerid'] == customer_id].sort_values('orderdate')
+    
+    if cust_orders.empty:
+        return f"顧客ID {customer_id} の注文履歴はありません"
+    
+    # KPI計算
+    total_orders = cust_orders.shape[0]           # 累計注文回数
+    total_spent = cust_orders['orderprice'].sum() # 累計購入金額
+    last_order = cust_orders['orderdate'].max()   # 最終購入日
+    
+    # グラフ作成
+    fig = px.bar(
+        cust_orders,
+        x='orderdate',
+        y='orderprice',
+        title=f'顧客ID {customer_id} の購入履歴',
+        labels={'orderdate':'注文日', 'orderprice':'注文金額'}
     )
-    .reset_index()
-)
-
-# 在庫情報を結合
-item_summary = pd.merge(item_summary, stock, left_on='orderitem', right_on='item', how='left')
-
-# 在庫少ない商品抽出（5以下）
-low_stock_items = item_summary[item_summary['stock'] <= 5].to_dict(orient='records')
-
-# 売上グラフ作成
-fig = px.bar(
-    item_summary.sort_values('total_sales', ascending=False),
-    x='orderitem', y='total_sales',
-    color='orderitemcate',
-    title='商品別累計売上ランキング',
-    labels={'orderitem':'商品コード', 'total_sales':'累計売上'}
-)
-graph_html = pio.to_html(fig, full_html=False, include_plotlyjs='cdn')
-
-# --- ルート ---
-@app.route('/item_analysis')
-def item_analysis():
+    graph_html = pio.to_html(fig, full_html=False)
+    
+    # 顧客情報
+    customer_info = cust[cust['customerid'] == customer_id].to_dict(orient='records')[0]
+    
     return render_template(
-        'item_analysis.html',
+        'customer.html',
         graph_html=graph_html,
-        low_stock_items=low_stock_items
+        customer_info=customer_info,
+        cust_orders=cust_orders.to_dict(orient='records'),
+        total_orders=total_orders,
+        total_spent=total_spent,
+        last_order=last_order
     )
 
 if __name__ == "__main__":
