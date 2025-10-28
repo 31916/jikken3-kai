@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request
 import pandas as pd
+import plotly.express as px
+import plotly.io as pio
 import os
 
 app = Flask(__name__)
@@ -11,17 +13,52 @@ ORDER_PATH = os.path.join(DATA_DIR, "order.csv")
 
 # --- CSV読み込み ---
 cust = pd.read_csv(CUST_PATH, encoding='utf-8')
+
+# order.csv は余分な列があるので、必要な列だけ読み込む
 order_cols = ['customerid','orderdate','orderno','itemprice','orderitem','orderitemcate','ordernum','orderprice']
 order = pd.read_csv(ORDER_PATH, encoding='utf-8', usecols=order_cols)
 
+# 列名を小文字化
 cust.columns = [c.lower() for c in cust.columns]
 order.columns = [c.lower() for c in order.columns]
+
+# orderdateをdatetime型に変換
 order['orderdate'] = pd.to_datetime(order['orderdate'])
 
-# --- トップページ（検索フォーム） ---
+# --- トップページ ---
 @app.route('/')
 def index():
-    return render_template('search.html')  # search.html のみ残す
+    return render_template('search.html')
+
+# --- 顧客ID検索 ---
+@app.route('/customer', methods=['POST'])
+def customer():
+    customer_id = request.form.get('customer_id')
+    
+    if not customer_id:
+        return "顧客IDを入力してください"
+    
+    # 該当顧客の注文履歴
+    cust_orders = order[order['customerid'] == customer_id].sort_values('orderdate')
+    
+    if cust_orders.empty:
+        return f"顧客ID {customer_id} の注文履歴はありません"
+    
+    # グラフ作成
+    fig = px.bar(
+        cust_orders,
+        x='orderdate',
+        y='orderprice',
+        title=f'顧客ID {customer_id} の購入履歴',
+        labels={'orderdate':'注文日', 'orderprice':'注文金額'}
+    )
+    
+    graph_html = pio.to_html(fig, full_html=False)
+    
+    # 顧客情報
+    customer_info = cust[cust['customerid'] == customer_id].to_dict(orient='records')[0]
+    
+    return render_template('customer.html', graph_html=graph_html, customer_info=customer_info)
 
 if __name__ == "__main__":
     app.run(debug=True)
