@@ -1,14 +1,3 @@
-import os
-
-CUST_PATH = os.path.join("data", "cust.csv")
-ORDER_PATH = os.path.join("data", "order.csv")
-
-print("cust.csv exists:", os.path.exists(CUST_PATH))
-print("order.csv exists:", os.path.exists(ORDER_PATH))
-
-
-print("start app.py")
-
 from flask import Flask, render_template, request
 import pandas as pd
 import plotly.express as px
@@ -24,16 +13,12 @@ ORDER_PATH = os.path.join(DATA_DIR, "order.csv")
 
 # --- CSV読み込み ---
 cust = pd.read_csv(CUST_PATH, encoding='utf-8')
-
-# order.csv は余分な列があるので、必要な列だけ読み込む
 order_cols = ['customerid','orderdate','orderno','itemprice','orderitem','orderitemcate','ordernum','orderprice']
 order = pd.read_csv(ORDER_PATH, encoding='utf-8', usecols=order_cols)
 
 # 列名を小文字化
 cust.columns = [c.lower() for c in cust.columns]
 order.columns = [c.lower() for c in order.columns]
-
-# orderdateをdatetime型に変換
 order['orderdate'] = pd.to_datetime(order['orderdate'])
 
 # --- トップページ ---
@@ -55,6 +40,11 @@ def customer():
     if cust_orders.empty:
         return f"顧客ID {customer_id} の注文履歴はありません"
     
+    # KPI計算
+    total_orders = cust_orders.shape[0]           # 累計注文回数
+    total_spent = cust_orders['orderprice'].sum() # 累計購入金額
+    last_order = cust_orders['orderdate'].max()   # 最終購入日
+    
     # グラフ作成
     fig = px.bar(
         cust_orders,
@@ -63,13 +53,20 @@ def customer():
         title=f'顧客ID {customer_id} の購入履歴',
         labels={'orderdate':'注文日', 'orderprice':'注文金額'}
     )
-    
     graph_html = pio.to_html(fig, full_html=False)
     
     # 顧客情報
     customer_info = cust[cust['customerid'] == customer_id].to_dict(orient='records')[0]
     
-    return render_template('customer.html', graph_html=graph_html, customer_info=customer_info)
+    return render_template(
+        'customer.html',
+        graph_html=graph_html,
+        customer_info=customer_info,
+        cust_orders=cust_orders.to_dict(orient='records'),
+        total_orders=total_orders,
+        total_spent=total_spent,
+        last_order=last_order
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,18 +1,59 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-    <meta charset="utf-8">
-    <title>顧客詳細</title>
+    <meta charset="UTF-8">
+    <title>顧客情報</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
+        th { background-color: #eee; }
+        .kpi { margin-top: 10px; }
+    </style>
 </head>
 <body>
-    <h1>顧客ID {{ customer_info.customerid }} の購入履歴</h1>
-    <p>名前: {{ customer_info.lastname }} {{ customer_info.firstname }}</p>
-    <p>年齢: {{ customer_info.age }} / 性別: {{ customer_info.sex }} / 都道府県: {{ customer_info.area }}</p>
-    
-    <div>
-        {{ graph_html|safe }}
+    <h1>顧客情報: {{ customer_info['lastname'] }} {{ customer_info['firstname'] }}</h1>
+
+    <p>生年月日: {{ customer_info['birthday'] }} | 年齢: {{ customer_info['age'] }} | 性別: {{ '男性' if customer_info['sex']==1 else '女性' }}</p>
+    <p>都道府県: {{ customer_info['area'] }}</p>
+
+    <div class="kpi">
+        <strong>累計注文回数:</strong> {{ total_orders }}<br>
+        <strong>累計購入金額:</strong> {{ total_spent }}<br>
+        <strong>最終購入日:</strong> {{ last_order.strftime('%Y/%m/%d') }}
     </div>
-    
-    <a href="/">戻る</a>
+
+    <!-- グラフ表示 -->
+    <div>
+        {{ graph_html | safe }}
+    </div>
+
+    <!-- 注文履歴テーブル -->
+    <h2>注文履歴</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>注文日</th>
+                <th>注文番号</th>
+                <th>商品コード</th>
+                <th>カテゴリ</th>
+                <th>単価</th>
+                <th>数量</th>
+                <th>注文合計</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for order in cust_orders %}
+            <tr>
+                <td>{{ order['orderdate'].strftime('%Y/%m/%d') }}</td>
+                <td>{{ order['orderno'] }}</td>
+                <td>{{ order['orderitem'] }}</td>
+                <td>{{ order['orderitemcate'] }}</td>
+                <td>{{ order['itemprice'] }}</td>
+                <td>{{ order['ordernum'] }}</td>
+                <td>{{ order['orderprice'] }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
