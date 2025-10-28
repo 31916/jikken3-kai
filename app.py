@@ -1,3 +1,13 @@
+import os
+
+CUST_PATH = os.path.join("data", "cust.csv")
+ORDER_PATH = os.path.join("data", "order.csv")
+
+print("cust.csv exists:", os.path.exists(CUST_PATH))
+print("order.csv exists:", os.path.exists(ORDER_PATH))
+
+
+
 from flask import Flask, render_template, request
 import pandas as pd
 import plotly.express as px
