@@ -19,6 +19,8 @@ order = pd.read_csv(ORDER_PATH, encoding='utf-8', usecols=order_cols)
 # 列名を小文字化
 cust.columns = [c.lower() for c in cust.columns]
 order.columns = [c.lower() for c in order.columns]
+
+# orderdateをdatetime型に変換
 order['orderdate'] = pd.to_datetime(order['orderdate'])
 
 # --- トップページ ---
@@ -41,9 +43,9 @@ def customer():
         return f"顧客ID {customer_id} の注文履歴はありません"
     
     # KPI計算
-    total_orders = cust_orders.shape[0]           # 累計注文回数
-    total_spent = cust_orders['orderprice'].sum() # 累計購入金額
-    last_order = cust_orders['orderdate'].max()   # 最終購入日
+    total_orders = cust_orders.shape[0]            # 累計注文回数
+    total_spent = cust_orders['orderprice'].sum()  # 累計購入金額
+    last_order = cust_orders['orderdate'].max()    # 最終購入日
     
     # グラフ作成
     fig = px.bar(
@@ -60,12 +62,12 @@ def customer():
     
     return render_template(
         'customer.html',
-        graph_html=graph_html,
         customer_info=customer_info,
-        cust_orders=cust_orders.to_dict(orient='records'),
         total_orders=total_orders,
         total_spent=total_spent,
-        last_order=last_order
+        last_order=last_order,
+        graph_html=graph_html,
+        cust_orders=cust_orders.to_dict(orient='records')
     )
 
 if __name__ == "__main__":
