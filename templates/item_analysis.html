@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>商品分析・在庫警告</title>
+  <style>
+    body { font-family: Meiryo, sans-serif; background: #f8fafc; padding: 20px; }
+    h1 { margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+    th, td { padding: 8px 12px; border-bottom: 1px solid #ddd; text-align: left; }
+    th { background: #f1f5f9; }
+    tr:hover { background: #f9fafb; }
+    .warning { color: red; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>人気商品ランキング・在庫警告</h1>
+
+  <!-- グラフ -->
+  <div>
+    {{ graph_html|safe }}
+  </div>
+
+  <!-- 在庫少ない商品 -->
+  <h2>在庫少ない商品（在庫5以下）</h2>
+  <table>
+    <tr>
+      <th>商品コード</th><th>累計売上</th><th>注文数</th><th>在庫数</th>
+    </tr>
+    {% for item in low_stock_items %}
+    <tr>
+      <td>{{ item.orderitem }}</td>
+      <td>¥ {{ "{:,}".format(item.total_sales|int) }}</td>
+      <td>{{ item.order_count }}</td>
+      <td class="warning">{{ item.stock }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+
+</body>
+</html>
