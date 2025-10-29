@@ -76,8 +76,8 @@
                     <label for="gender">性別:</label>
                     <select name="gender" id="gender" style="padding: 5px;">
                         <option value="">-- 全て --</option>
-                        <option value="1" {% if gender_filter == '1' %}selected{% endif %}>1 (男性と仮定)</option>
-                        <option value="2" {% if gender_filter == '2' %}selected{% endif %}>2 (女性と仮定)</option>
+                        <option value="1" {% if gender_filter == '1' %}selected{% endif %}>1 男性</option>
+                        <option value="2" {% if gender_filter == '2' %}selected{% endif %}>2 女性</option>
                     </select>
                     
                     <label for="min_age">年齢 (最小):</label>

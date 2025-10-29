@@ -24,15 +24,20 @@ header {
 
 .menu-icon {
     cursor: pointer;
-    padding: 10px;
+    display: flex;               /* ← flexで縦方向に並べる */
+    flex-direction: column;
+    justify-content: space-between;
+    width: 28px;                 /* ← 幅を指定 */
+    height: 20px;                /* ← 高さを指定 */
+    margin-right: 15px;          /* ← タイトルとの間に余白 */
 }
 
-.bar {
-    width: 25px;
+.menu-icon .bar {
+    width: 100%;                 /* ← 親に合わせる */
     height: 3px;
-    background-color: white;
-    margin: 4px 0;
-    transition: 0.4s; /* アニメーション */
+    background-color: black;
+    border-radius: 2px;
+    transition: 0.4s;
 }
 
 /* --- サイドバーのスタイル --- */
@@ -52,8 +57,17 @@ header {
     list-style: none;
     padding: 0;
 }
+.sidebar ul li {
+  padding: 15px 20px;
+}
 
-.sidebar a {
+.sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.1em;
+}
+
+.sidebar  a {
     padding: 15px 20px;
     text-decoration: none;
     font-size: 18px;
@@ -62,7 +76,7 @@ header {
     transition: 0.3s;
 }
 
-.sidebar a:hover {
+.sidebar ul li a:hover {
     color: #f1f1f1;
     background-color: #444;
 }
