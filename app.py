@@ -95,7 +95,7 @@ def index():
 
     # --- HTML描画 ---
     return render_template(
-        "result.html",
+        "menu.html",
         total_customers=int(total_customers),
         total_sales=int(total_sales),
         avg_sales=int(avg_sales),
