@@ -1,114 +1,85 @@
-/* 基本リセット */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: sans-serif;
-    background-color: #f4f4f4;
-    overflow-x: hidden; /* 横スクロール防止 */
-}
-
-/* --- ヘッダーとメニューアイコン --- */
+/* ========== 固定ヘッダー ========== */
 header {
-    background-color: #333;
-    color: white;
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    box-sizing: border-box;
-    z-index: 100;
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  box-sizing: border-box;
 }
 
+header h1 {
+  margin: 0;
+  font-size: 1.5em;
+}
+
+/* ========== ハンバーガーアイコン ========== */
 .menu-icon {
-    cursor: pointer;
-    display: flex;               /* ← flexで縦方向に並べる */
-    flex-direction: column;
-    justify-content: space-between;
-    width: 28px;                 /* ← 幅を指定 */
-    height: 20px;                /* ← 高さを指定 */
-    margin-right: 15px;          /* ← タイトルとの間に余白 */
+  cursor: pointer;
+  margin-right: 15px;
+  display: inline-block;
 }
 
 .menu-icon .bar {
-    width: 100%;                 /* ← 親に合わせる */
-    height: 3px;
-    background-color: black;
-    border-radius: 2px;
-    transition: 0.4s;
+  width: 25px;
+  height: 3px;
+  background-color: white;
+  margin: 4px 0;
+  transition: 0.3s;
 }
 
-/* --- サイドバーのスタイル --- */
+/* ========== サイドバー ========== */
 .sidebar {
-    height: 100%;
-    width: 250px; /* メニューの幅 */
-    position: fixed;
-    top: 0;
-    left: -250px; /* 初期位置: 画面外に隠す */
-    background-color: #222;
-    padding-top: 60px;
-    transition: 0.5s; /* アニメーション */
-    z-index: 99;
+  position: fixed;
+  top: 60px; /* ヘッダーの下に配置 */
+  left: -240px; /* 初期は非表示（左に隠す） */
+  width: 220px;
+  height: 100%;
+  background-color: #2c2c2c;
+  overflow-y: auto;
+  transition: left 0.3s ease;
+  z-index: 999;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+}
+
+.sidebar.active {
+  left: 0; /* 表示状態 */
 }
 
 .sidebar ul {
-    list-style: none;
-    padding: 0;
-}
-.sidebar ul li {
-  padding: 15px 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.sidebar ul li a {
+.sidebar li {
+  border-bottom: 1px solid #444;
+}
+
+.sidebar a {
   color: white;
+  display: block;
+  padding: 15px 20px;
   text-decoration: none;
-  font-size: 1.1em;
+  transition: background 0.3s;
 }
 
-.sidebar  a {
-    padding: 15px 20px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #818181;
-    display: block;
-    transition: 0.3s;
+.sidebar a:hover {
+  background-color: #007bff;
 }
 
-.sidebar ul li a:hover {
-    color: #f1f1f1;
-    background-color: #444;
-}
-
-/* --- メインコンテンツ --- */
+/* ========== メインコンテンツ ========== */
 .main-content {
-    padding: 80px 20px 20px 20px; /* ヘッダーの高さ分スペースを確保 */
-    transition: margin-left 0.5s; /* アニメーション */
+  transition: margin-left 0.3s ease;
+  margin-left: 0;
+  padding-top: 70px; /* ヘッダー分の余白 */
 }
 
-
-/* === メニューが開いた時のスタイル (JavaScriptで付与されるクラス) === */
-
-/* サイドバーを画面内に移動 */
-.sidebar.active {
-    left: 0; 
-}
-
-/* メインコンテンツを右にずらす */
-.main-content.shifted {
-    margin-left: 250px; /* サイドバーの幅と同じだけずらす */
-}
-
-/* ハンバーガーアイコンを×印に変形 */
-.menu-icon.active .bar:nth-child(1) {
-    transform: translateY(7px) rotate(-45deg);
-}
-
-.menu-icon.active .bar:nth-child(2) {
-    opacity: 0; /* 中央の線を非表示 */
-}
-
-.menu-icon.active .bar:nth-child(3) {
-    transform: translateY(-7px) rotate(45deg);
+.sidebar.active ~ .main-content {
+  margin-left: 220px; /* サイドバーが出た分だけ右にずらす */
 }
