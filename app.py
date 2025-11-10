@@ -9,6 +9,7 @@ DATA_DIR = "data"
 CUST_PATH = os.path.join(DATA_DIR, "cust.csv")
 ORDER_PATH = os.path.join(DATA_DIR, "order.csv")
 ITEM_STOCK_PATH = os.path.join(DATA_DIR, "itemstock.csv")
+ITEM_PATH = os.path.join(DATA_DIR, "item.csv")
 
 @app.route('/', methods=['GET'])
 def index():
@@ -22,13 +23,15 @@ def index():
         cust = pd.read_csv(CUST_PATH, encoding='utf-8-sig')
         order = pd.read_csv(ORDER_PATH, encoding='utf-8-sig')
         item_stock = pd.read_csv(ITEM_STOCK_PATH, encoding='utf-8-sig')
+        item = pd.read_csv(ITEM_PATH, encoding='utf-8-sig')
     except FileNotFoundError as e:
         return f"エラー: {e.filename} が見つかりません。", 500
 
-    # --- 列名の統一 ---
+    # --- 列名の統一(小型化) ---
     cust.columns = [c.lower() for c in cust.columns]
     order.columns = [c.lower() for c in order.columns]
     item_stock.columns = [c.lower() for c in item_stock.columns]
+    item.columns = [c.lower() for c in item.columns]
 
     order.rename(columns={'orderitem': 'itemcode'}, inplace=True)
     item_stock.rename(columns={'item': 'itemcode'}, inplace=True)
