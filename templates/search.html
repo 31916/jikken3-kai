@@ -1,40 +1,57 @@
-<form method="get" action="/stock.html">
-  <ul>
-    <li>
-      <label>商品名:
-        <input type="text" name="item" value="{{ search_params.item }}">
-      </label>
-    </li>
-    <li>
-      <label>カテゴリ:
-        <select name="itemcate">
-          <option value="">-- 全て --</option>
-          {% for cat in categories %}
-            <option value="{{ cat }}" {% if cat == search_params.itemcate %}selected{% endif %}>{{ cat }}</option>
-          {% endfor %}
-        </select>
-      </label>
-    </li>
-    <li>
-      <label>在庫率 min:
-        <input type="number" name="min_stock_ratio" value="{{ search_params.min_stock_ratio }}" step="0.1"> %
-      </label>
-    </li>
-    <li>
-      <label>在庫率 max:
-        <input type="number" name="max_stock_ratio" value="{{ search_params.max_stock_ratio }}" step="0.1"> %
-      </label>
-    </li>
-    <li>
-      <label>総注文数 min:
-        <input type="number" name="min_ordered" value="{{ search_params.min_ordered }}">
-      </label>
-    </li>
-    <li>
-      <label>総注文数 max:
-        <input type="number" name="max_ordered" value="{{ search_params.max_ordered }}">
-      </label>
-    </li>
-  </ul>
-  <button type="submit">検索</button>
-</form>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>顧客ID検索</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='humberger.css') }}">
+</head>
+<body>
+  <header>
+    <div id="menu-icon" class="menu-icon">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <h1 style="margin: 0; font-size: 1.5em;">🔍 顧客ID検索</h1>
+  </header>
+
+  <nav id="sidebar" class="sidebar">
+    <ul>
+      <li><a href="/">経営戦略</a></li>
+      <li><a href="/search.html">顧客ID検索</a></li>
+      <li><a href="/stock.html">在庫リスト</a></li>
+    </ul>
+  </nav>
+
+  <h2>顧客IDで検索</h2>
+
+  <form id="searchForm">
+    <ul>
+      <li>
+        <label>顧客ID:
+          <input type="text" id="customer_id" placeholder="例: 12345">
+        </label>
+      </li>
+      <li>
+        <button type="submit">検索</button>
+      </li>
+    </ul>
+  </form>
+
+  <p><a href="/">← 戻る</a></p>
+
+  <script src="{{ url_for('static', filename='humberger.js') }}"></script>
+  <script>
+    document.getElementById('searchForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      var id = document.getElementById('customer_id').value.trim();
+      if(id){
+        window.location.href = '/customer/' + id;
+      } else {
+        alert("顧客IDを入力してください。");
+      }
+    });
+  </script>
+</body>
+</html>
