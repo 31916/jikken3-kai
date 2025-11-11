@@ -1,5 +1,5 @@
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 import pandas as pd
 import plotly.express as px
 import plotly.io as pio
@@ -170,6 +170,13 @@ def customer_detail(customer_id):
         graph_html=graph_html,
         cust_orders=cust_orders.to_dict(orient='records')
     )
+    
+@app.route('/customer')
+def customer_redirect():
+    customer_id = request.args.get('customer_id')
+    if not customer_id:
+        return "顧客IDが指定されていません", 400
+    return redirect(f"/customer/{customer_id}")
 
 # ------------------------------
 # ③ 在庫管理ページ（複合検索対応）

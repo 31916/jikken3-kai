@@ -4,10 +4,7 @@
     <meta charset="utf-8">
     <title>顧客検索</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
-
     <link rel="stylesheet" href="{{ url_for('static', filename='humberger.css') }}">
-
-    
 </head>
 <body>
     <header>
@@ -26,13 +23,16 @@
             <li><a href="stock.html">在庫リスト</a></li>
         </ul>
     </nav>
+
     <h1>顧客ID検索</h1>
-    <form onsubmit="return goCustomer();">
-        顧客ID: <input type="text" id="customer_id" placeholder="顧客IDを入力">
+
+    <!-- 👇ここを入れる（旧フォームを置き換え） -->
+    <form action="/customer" method="get">
+        顧客ID: <input type="text" name="customer_id" placeholder="顧客IDを入力">
         <input type="submit" value="検索">
     </form>
+    <!-- 👆ここまで -->
 
     <script src="{{ url_for('static', filename='humberger.js') }}"></script>
-
 </body>
 </html>
