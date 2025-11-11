@@ -1,14 +1,55 @@
 <!doctype html>
-<html>
+<html lang="ja">
 <head>
     <meta charset="utf-8">
     <title>顧客検索</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f8f8f8;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin-top: 20px;
+        }
+        input[type="text"] {
+            padding: 5px;
+            font-size: 16px;
+            width: 200px;
+        }
+        input[type="submit"] {
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .notice {
+            margin-top: 10px;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
     <h1>顧客ID検索</h1>
-    <form action="/customer" method="post">
-        顧客ID: <input type="text" name="customer_id">
+    <form onsubmit="return goCustomer();">
+        顧客ID: <input type="text" id="customer_id" placeholder="顧客IDを入力">
         <input type="submit" value="検索">
     </form>
+    <p class="notice">※ 顧客IDを入力して「検索」を押してください。</p>
+
+    <script>
+        function goCustomer() {
+            const id = document.getElementById('customer_id').value.trim();
+            if (!id) {
+                alert("顧客IDを入力してください");
+                return false;
+            }
+            // 顧客詳細ページにリダイレクト
+            window.location.href = `/customer/${id}`;
+            return false; // フォームの標準送信を止める
+        }
+    </script>
 </body>
 </html>
