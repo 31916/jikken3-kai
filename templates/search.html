@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="ja">
 <head>
     <meta charset="utf-8">
     <title>顧客検索</title>
@@ -27,11 +27,12 @@
         </ul>
     </nav>
     <h1>顧客ID検索</h1>
-    <form action="/customer" method="post">
-        顧客ID: <input type="text" name="customer_id">
+    <form onsubmit="return goCustomer();">
+        顧客ID: <input type="text" id="customer_id" placeholder="顧客IDを入力">
         <input type="submit" value="検索">
     </form>
 
     <script src="{{ url_for('static', filename='humberger.js') }}"></script>
+
 </body>
 </html>
