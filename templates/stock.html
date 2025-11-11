@@ -1,3 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>経営戦略ダッシュボード</title>
+   <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
+
+   <link rel="stylesheet" href="{{ url_for('static', filename='humberger.css') }}">
+  
+</head>
+<header>
+        <div id="menu-icon" class="menu-icon">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <h1 style="margin: 0; font-size: 1.5em;">📦在庫リスト</h1>
+  </header>
+
+  <nav id="sidebar" class="sidebar">
+        <ul>
+            <li><a href="/">経営戦略</a></li>
+            <li><a href="search.html">顧客ID検索</a></li>
+            <li><a href="stock.html">在庫リスト</a></li>
+        </ul>
+  </nav>
+
 <h2>在庫率10%未満の商品（上位5件）</h2>
 <table>
   <thead>
