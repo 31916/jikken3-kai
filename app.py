@@ -197,7 +197,7 @@ def stock_page():
     order.rename(columns={'orderitem': 'itemcode'}, inplace=True)
     item_stock.rename(columns={'item': 'itemcode'}, inplace=True)
 
-    # 在庫分析（index() と同じロジック）
+    # 在庫分析
     order_stock_merged = pd.merge(
         order,
         item_stock[['itemcode', 'stock']],
