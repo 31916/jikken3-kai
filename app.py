@@ -178,6 +178,5 @@ def search_page():
 def stock_page():
     return render_template('stock.html')
 
-
 if __name__ == "__main__":
     app.run(debug=True)

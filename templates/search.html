@@ -3,12 +3,35 @@
 <head>
     <meta charset="utf-8">
     <title>顧客検索</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='humberger.css') }}">
+
+    
 </head>
 <body>
+    <header>
+        <div id="menu-icon" class="menu-icon">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <h1 style="margin: 0; font-size: 1.5em;">📊 顧客・在庫分析ダッシュボード</h1>
+    </header>
+
+    <nav id="sidebar" class="sidebar">
+        <ul>
+            <li><a href="/">経営戦略</a></li>
+            <li><a href="search.html">顧客ID検索</a></li>
+            <li><a href="stock.html">在庫リスト</a></li>
+        </ul>
+    </nav>
     <h1>顧客ID検索</h1>
     <form action="/customer" method="post">
         顧客ID: <input type="text" name="customer_id">
         <input type="submit" value="検索">
     </form>
+
+    <script src="{{ url_for('static', filename='humberger.js') }}"></script>
 </body>
 </html>
