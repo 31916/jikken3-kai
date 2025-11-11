@@ -5,13 +5,6 @@
   <title>在庫リスク分析</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='humberger.css') }}">
-  <style>
-    form input, form button { margin: 4px; padding: 4px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-    th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
-    th { background-color: #eee; }
-    .low-stock { background-color: #ffe6e6; }
-  </style>
 </head>
 <body>
   <header>
@@ -59,20 +52,42 @@
   </table>
 
   <!-- 検索フォーム -->
-  <h2>商品検索</h2>
-  <form method="get" action="{{ url_for('stock_page') }}">
-    <input type="text" name="item" placeholder="商品コード" value="{{ search_params.item }}">
-    <input type="text" name="itemcate" placeholder="カテゴリ" value="{{ search_params.itemcate }}">
-    <input type="number" step="0.1" name="min_stock_ratio" placeholder="最小在庫率(%)" value="{{ search_params.min_stock_ratio }}">
-    <input type="number" step="0.1" name="max_stock_ratio" placeholder="最大在庫率(%)" value="{{ search_params.max_stock_ratio }}">
-    <input type="number" name="min_ordered" placeholder="最小注文数" value="{{ search_params.min_ordered }}">
-    <input type="number" name="max_ordered" placeholder="最大注文数" value="{{ search_params.max_ordered }}">
+  <h2>在庫検索</h2>
+  <form method="get" action="/stock.html">
+    <label>商品名:
+      <input type="text" name="item" value="{{ search_params.item }}">
+    </label>
+
+    <label>カテゴリ:
+      <select name="itemcate">
+        <option value="">-- 全て --</option>
+        {% for cat in categories %}
+          <option value="{{ cat }}" {% if cat == search_params.itemcate %}selected{% endif %}>{{ cat }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label>在庫率 min:
+      <input type="number" name="min_stock_ratio" value="{{ search_params.min_stock_ratio }}" step="0.1"> %
+    </label>
+
+    <label>在庫率 max:
+      <input type="number" name="max_stock_ratio" value="{{ search_params.max_stock_ratio }}" step="0.1"> %
+    </label>
+
+    <label>総注文数 min:
+      <input type="number" name="min_ordered" value="{{ search_params.min_ordered }}">
+    </label>
+
+    <label>総注文数 max:
+      <input type="number" name="max_ordered" value="{{ search_params.max_ordered }}">
+    </label>
+
     <button type="submit">検索</button>
-    <button type="button" onclick="window.location='{{ url_for('stock_page') }}'">リセット</button>
   </form>
 
-  <!-- 検索結果 / 全商品在庫一覧 -->
-  <h2>全商品在庫一覧（検索結果）</h2>
+  <!-- 検索結果テーブル -->
+  <h2>検索結果</h2>
   <table>
     <thead>
       <tr>
@@ -97,6 +112,7 @@
   </table>
 
   <p><a href="/">← 戻る</a></p>
+
   <script src="{{ url_for('static', filename='humberger.js') }}"></script>
 </body>
 </html>
