@@ -205,13 +205,14 @@ def stock_page():
         axis=1
     )
 
+    # 🔹 在庫率10%未満の商品（上位5件） → ここでは検索をかけない
     low_stock_risk = (
         item_analysis[(item_analysis['total_ordered'] > 0) & (item_analysis['stock_ratio'] < 0.1)]
         .sort_values('stock_ratio')
         .head(5)
     )
 
-    # --- 複合検索 ---
+    # --- 複合検索（item_analysis のみに適用） ---
     itemcode_query = request.args.get('itemcode', '').strip()
     itemname_query = request.args.get('itemname', '').strip()
     min_stock_ratio = request.args.get('min_stock_ratio', type=float)
@@ -219,32 +220,28 @@ def stock_page():
     min_ordered = request.args.get('min_ordered', type=int)
     max_ordered = request.args.get('max_ordered', type=int)
 
-    if itemcode_query:
-        item_analysis = item_analysis[item_analysis['itemcode'].str.contains(itemcode_query, case=False, na=False)]
-        low_stock_risk = low_stock_risk[low_stock_risk['itemcode'].str.contains(itemcode_query, case=False, na=False)]
+    filtered_analysis = item_analysis.copy()
 
-    if 'itemname' in item_analysis.columns and itemname_query:
-        item_analysis = item_analysis[item_analysis['itemname'].str.contains(itemname_query, case=False, na=False)]
-        low_stock_risk = low_stock_risk[low_stock_risk['itemname'].str.contains(itemname_query, case=False, na=False)]
+    if itemcode_query:
+        filtered_analysis = filtered_analysis[filtered_analysis['itemcode'].str.contains(itemcode_query, case=False, na=False)]
+
+    if 'itemname' in filtered_analysis.columns and itemname_query:
+        filtered_analysis = filtered_analysis[filtered_analysis['itemname'].str.contains(itemname_query, case=False, na=False)]
 
     if min_stock_ratio is not None:
-        item_analysis = item_analysis[item_analysis['stock_ratio']*100 >= min_stock_ratio]
-        low_stock_risk = low_stock_risk[low_stock_risk['stock_ratio']*100 >= min_stock_ratio]
+        filtered_analysis = filtered_analysis[filtered_analysis['stock_ratio']*100 >= min_stock_ratio]
     if max_stock_ratio is not None:
-        item_analysis = item_analysis[item_analysis['stock_ratio']*100 <= max_stock_ratio]
-        low_stock_risk = low_stock_risk[low_stock_risk['stock_ratio']*100 <= max_stock_ratio]
+        filtered_analysis = filtered_analysis[filtered_analysis['stock_ratio']*100 <= max_stock_ratio]
 
     if min_ordered is not None:
-        item_analysis = item_analysis[item_analysis['total_ordered'] >= min_ordered]
-        low_stock_risk = low_stock_risk[low_stock_risk['total_ordered'] >= min_ordered]
+        filtered_analysis = filtered_analysis[filtered_analysis['total_ordered'] >= min_ordered]
     if max_ordered is not None:
-        item_analysis = item_analysis[item_analysis['total_ordered'] <= max_ordered]
-        low_stock_risk = low_stock_risk[low_stock_risk['total_ordered'] <= max_ordered]
+        filtered_analysis = filtered_analysis[filtered_analysis['total_ordered'] <= max_ordered]
 
     return render_template(
         'stock.html',
         low_stock_risk=low_stock_risk.to_dict(orient='records'),
-        item_analysis=item_analysis.to_dict(orient='records'),
+        item_analysis=filtered_analysis.to_dict(orient='records'),
         search_params={
             'itemcode': itemcode_query,
             'itemname': itemname_query,
