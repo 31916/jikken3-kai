@@ -174,6 +174,9 @@ def format_currency(value):
 def search_page():
     return render_template('search.html')
 
+@app.route('/stock.html')
+def stock_page():
+    return render_template('stock.html')
 
 
 if __name__ == "__main__":
