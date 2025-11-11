@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>顧客詳細・注文履歴</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
+</head>
+<body>
+  <h1>👤 顧客詳細・注文履歴</h1>
+
+  <div class="info">
+    <p><strong>顧客ID:</strong> {{ customer.customerid }}</p>
+    <p><strong>氏名:</strong> {{ customer.苗字 }} {{ customer.名前 }}</p>
+    <p><strong>年齢:</strong> {{ customer.年齢 }}</p>
+    <p><strong>性別:</strong> {{ customer.性別 }}</p>
+    <p><strong>都道府県:</strong> {{ customer.都道府県 }}</p>
+    <p><strong>最終注文日:</strong> {{ customer.最終注文日 }}</p>
+    <p><strong>累計注文金額:</strong> ¥{{ customer.注文合計金額|format_currency }}</p>
+  </div>
+
+  <h2>🧾 注文履歴</h2>
+  <table>
+    <thead><tr>
+      <th>注文日</th><th>商品コード</th><th>商品カテゴリ</th>
+      <th>商品価格</th><th>注文数</th><th>合計注文金額</th>
+    </tr></thead>
+    <tbody>
+      {% for o in orders %}
+      <tr>
+        <td>{{ o.注文日 }}</td>
+        <td>{{ o.商品コード }}</td>
+        <td>{{ o.商品カテゴリ }}</td>
+        <td>¥{{ o.商品価格|format_currency }}</td>
+        <td>{{ o.注文数 }}</td>
+        <td>¥{{ o.合計注文金額|format_currency }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p><a href="/">← 戻る</a></p>
+</body>
+</html>

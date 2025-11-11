@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>経営戦略ダッシュボード</title>
+   <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
+</head>
+<body>
+  <h1>📊 経営戦略ダッシュボード</h1>
+
+  <div class="metrics">
+    <div class="metric">
+      <h3>総顧客数</h3>
+      <p>{{ total_customers|format_currency }}</p>
+    </div>
+    <div class="metric">
+      <h3>総売上</h3>
+      <p>¥{{ total_sales|format_currency }}</p>
+    </div>
+    <div class="metric">
+      <h3>平均売上/顧客</h3>
+      <p>¥{{ avg_sales|format_currency }}</p>
+    </div>
+  </div>
+
+  <h2>購買回数TOP10</h2>
+  <table>
+    <thead><tr>
+      <th>顧客ID</th><th>性別</th><th>年齢</th>
+      <th>購入回数</th><th>合計金額</th><th>最終注文日</th>
+    </tr></thead>
+    <tbody>
+      {% for c in top_freq %}
+      <tr>
+        <td>{{ c.customerid }}</td>
+        <td>{{ c.sex }}</td>
+        <td>{{ c.age }}</td>
+        <td>{{ c.purchase_count|format_currency }}</td>
+        <td>¥{{ c.total_spent|format_currency }}</td>
+        <td>{{ c.last_order }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>売上金額TOP10</h2>
+  <table>
+    <thead><tr>
+      <th>顧客ID</th><th>性別</th><th>年齢</th>
+      <th>購入回数</th><th>合計金額</th><th>最終注文日</th>
+    </tr></thead>
+    <tbody>
+      {% for c in top_spend %}
+      <tr>
+        <td>{{ c.customerid }}</td>
+        <td>{{ c.sex }}</td>
+        <td>{{ c.age }}</td>
+        <td>{{ c.purchase_count|format_currency }}</td>
+        <td>¥{{ c.total_spent|format_currency }}</td>
+        <td>{{ c.last_order }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

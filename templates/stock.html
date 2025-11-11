@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>在庫リスク分析</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
+</head>
+<body>
+  <h1>📦 在庫リスク分析</h1>
+
+  <h2>在庫率10%未満の商品（上位5件）</h2>
+  <table>
+    <thead><tr>
+      <th>商品コード</th>
+      <th>総注文数</th>
+      <th>現在在庫</th>
+      <th>在庫率</th>
+    </tr></thead>
+    <tbody>
+      {% for i in low_stock_risk %}
+      <tr class="low-stock">
+        <td>{{ i.itemcode }}</td>
+        <td>{{ i.total_ordered|format_currency }}</td>
+        <td>{{ i.current_stock|format_currency }}</td>
+        <td>{{ ('%.1f' % (i.stock_ratio * 100)) }}%</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>全商品在庫一覧</h2>
+  <table>
+    <thead><tr>
+      <th>商品コード</th>
+      <th>総注文数</th>
+      <th>現在在庫</th>
+      <th>在庫率</th>
+    </tr></thead>
+    <tbody>
+      {% for i in item_analysis %}
+      <tr>
+        <td>{{ i.itemcode }}</td>
+        <td>{{ i.total_ordered|format_currency }}</td>
+        <td>{{ i.current_stock|format_currency }}</td>
+        <td>{{ ('%.1f' % (i.stock_ratio * 100)) }}%</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p><a href="/">← 戻る</a></p>
+</body>
+</html>
