@@ -1,0 +1,219 @@
+
+/* フォントとリセット */
+body {
+    font-family: 'Inter', 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #fff; /* 全体の文字色を白に */
+    text-align: center;
+    min-height: 100vh; 
+    
+    /* ========== 全画面背景画像とオーバーレイ ========== */
+    background-image: 
+        /* 濃いオーバーレイ (テキストを見やすくするため) */
+        linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), 
+        /* 抽象的なデータ分析のプレースホルダー画像 */
+        url('https://picsum.photos/seed/analytics_slide/1920/1080'); 
+    
+    background-size: cover; 
+    background-position: center; 
+    background-attachment: fixed; 
+    display: flex; /* コンテンツを中央に配置するために flex を使う */
+    flex-direction: column;
+}
+
+/* ========== ヘッダー（企業サイト風） ========== */
+.header {
+    background-color: rgba(255, 255, 255, 0.1); /* 背景透過 */
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 20;
+}
+
+.logo {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #007bff; /* メインカラー（ターコイズブルー系） */
+    text-decoration: none;
+}
+
+/* ========== カルーセルコンテナ（スライドショー本体） ========== */
+.carousel-wrapper {
+    flex-grow: 1; /* 残りのスペースを埋める */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden; /* スライドがはみ出さないように */
+}
+
+#carousel-container {
+    position: relative;
+    width: 80%; /* 最大幅 */
+    max-width: 900px;
+    height: 450px;
+    margin: auto;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+/* ========== 制御ボタン (前へ/次へ) のスタイル ========== */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 15px 10px;
+    cursor: pointer;
+    z-index: 30; /* スライドより前面に表示 */
+    font-size: 2em;
+    opacity: 0.7;
+    transition: opacity 0.3s, background 0.3s;
+}
+
+.carousel-btn:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+#prevButton {
+    left: 0;
+    border-radius: 0 15px 15px 0;
+}
+
+#nextButton {
+    right: 0;
+    border-radius: 15px 0 0 15px;
+}
+/* ================================================= */
+
+.carousel-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    opacity: 0;
+    transition: opacity 1s ease-in-out; /* フェードイン・アウト */
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 50px;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.1); /* スライド背景を少し白く */
+}
+
+.carousel-item.active {
+    opacity: 1;
+}
+
+.item-text {
+    text-align: left;
+    max-width: 50%;
+    position: relative;
+    z-index: 10;
+}
+
+.item-text h2 {
+    font-size: 2.5em;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #007bff; /* タイトルカラー */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.item-text p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 25px;
+    color: #e0e0e0;
+}
+
+.item-image {
+    width: 40%;
+    height: 80%;
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* 画像URLの個別設定 */
+#slide1 .item-image { background-image: url('https://placehold.co/400x300/17a2b8/ffffff?text=Dashboard'); }
+#slide2 .item-image { background-image: url('https://placehold.co/400x300/28a745/ffffff?text=Customer'); }
+#slide3 .item-image { background-image: url('https://placehold.co/400x300/ffc107/343a40?text=Stock'); }
+
+/* 詳細ボタン */
+.detail-button {
+    display: inline-block;
+    text-decoration: none;
+    background-color: #007bff;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
+}
+
+.detail-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* ========== フッター ========== */
+.footer {
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #cccccc;
+    font-size: 0.8em;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 20;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .header {
+        padding: 10px 20px;
+    }
+    #carousel-container {
+        width: 95%;
+        min-height: 300px;
+        padding: 10px;
+    }
+    .carousel-item {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+    }
+    .item-text {
+        max-width: 100%;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .item-text h2 {
+        font-size: 1.8em;
+    }
+    .item-text p {
+        font-size: 1em;
+    }
+    .item-image {
+        display: none; /* 小さい画面では画像を非表示 */
+    }
+    .carousel-btn {
+        padding: 10px 5px;
+        font-size: 1.5em;
+    }
+}
