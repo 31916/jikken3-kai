@@ -26,62 +26,93 @@
             <li><a href="stock.html">在庫リスト</a></li>
         </ul>
   </nav>
-  <h1>経営戦略ページ</h1>
-
-  <div class="metrics">
-    <div class="metric">
-      <h3>総顧客数</h3>
-      <p>{{ total_customers|format_currency }}</p>
+   <h1>📊 顧客・在庫分析ダッシュボード</h1>
+    
+    <h2>🔍 顧客属性フィルタ (検索条件)</h2>
+    <div class="filter-form">
+        <form method="GET" action="/">
+            <label for="gender">性別:</label>
+            <select name="gender" id="gender" style="padding: 5px;">
+                <option value="">全て</option>
+                <option value="1" {% if gender_filter == '1' %}selected{% endif %}>男性</option>
+                <option value="2" {% if gender_filter == '2' %}selected{% endif %}>女性</option>
+            </select>
+            
+            <label for="min_age">年齢 (最小):</label>
+            <input type="number" name="min_age" id="min_age" value="{{ min_age_filter if min_age_filter is not none else '' }}" min="0" style="width: 80px; padding: 5px;">
+            
+            <label for="max_age">年齢 (最大):</label>
+            <input type="number" name="max_age" id="max_age" value="{{ max_age_filter if max_age_filter is not none else '' }}" min="0" style="width: 80px; padding: 5px;">
+            
+            <button type="submit" style="padding: 6px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">フィルタを適用 / 検索</button>
+            <button type="button" onclick="window.location.href='/'" style="padding: 6px 15px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">リセット</button>
+        </form>
+        
+        <div class="filter-status">
+            適用中の条件: 
+            {% if gender_filter %}**性別**: {{ gender_filter }} {% endif %}
+            {% if min_age_filter %}**最小年齢**: {{ min_age_filter }}歳 {% endif %}
+            {% if max_age_filter %}**最大年齢**: {{ max_age_filter }}歳 {% endif %}
+            {% if not gender_filter and min_age_filter is none and max_age_filter is none %}**なし** (全データ表示){% endif %}
+        </div>
     </div>
-    <div class="metric">
-      <h3>総売上</h3>
-      <p>¥{{ total_sales|format_currency }}</p>
-    </div>
-    <div class="metric">
-      <h3>平均売上/顧客</h3>
-      <p>¥{{ avg_sales|format_currency }}</p>
-    </div>
-  </div>
 
-  <h2>購買回数TOP10</h2>
-  <table>
-    <thead><tr>
-      <th>顧客ID</th><th>性別</th><th>年齢</th>
-      <th>購入回数</th><th>合計金額</th><th>最終注文日</th>
-    </tr></thead>
-    <tbody>
-      {% for c in top_freq %}
-      <tr>
-        <td>{{ c.customerid }}</td>
-        <td>{{ c.sex }}</td>
-        <td>{{ c.age }}</td>
-        <td>{{ c.purchase_count|format_currency }}</td>
-        <td>¥{{ c.total_spent|format_currency }}</td>
-        <td>{{ c.last_order }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <h2>📈 総合KPI (検索結果)</h2>
+    <div class="kpi-container">
+        <div class="kpi-box">
+            <h3>総顧客数</h3>
+            <div class="kpi-value">{{ total_customers | format_currency }}人</div>
+        </div>
+        <div class="kpi-box">
+            <h3>総売上金額</h3>
+            <div class="kpi-value">¥{{ total_sales | format_currency }}</div>
+        </div>
+        <div class="kpi-box">
+            <h3>平均顧客単価 (ARPU)</h3>
+            <div class="kpi-value">¥{{ avg_sales | format_currency }}</div>
+        </div>
+    </div>
+    
+    <h2>🏅 顧客ランキング (検索結果に基づく)</h2>
+    <div class="ranking-section">
+        <div class="ranking-box">
+            <h3>購入回数 TOP 10</h3>
+            <table>
+                <thead>
+                    <tr><th>順位</th><th>顧客ID</th><th>氏名</th><th>回数</th></tr>
+                </thead>
+                <tbody>
+                    {% for cust in top_freq %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ cust.customerid }}</td>
+                        <td>{{ cust.lastname }} {{ cust.firstname }}</td>
+                        <td>{{ cust.purchase_count | int }}回</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-  <h2>売上金額TOP10</h2>
-  <table>
-    <thead><tr>
-      <th>顧客ID</th><th>性別</th><th>年齢</th>
-      <th>購入回数</th><th>合計金額</th><th>最終注文日</th>
-    </tr></thead>
-    <tbody>
-      {% for c in top_spend %}
-      <tr>
-        <td>{{ c.customerid }}</td>
-        <td>{{ c.sex }}</td>
-        <td>{{ c.age }}</td>
-        <td>{{ c.purchase_count|format_currency }}</td>
-        <td>¥{{ c.total_spent|format_currency }}</td>
-        <td>{{ c.last_order }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+        <div class="ranking-box">
+            <h3>合計購入金額 TOP 10</h3>
+            <table>
+                <thead>
+                    <tr><th>順位</th><th>顧客ID</th><th>氏名</th><th>金額</th></tr>
+                </thead>
+                <tbody>
+                    {% for cust in top_spend %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ cust.customerid }}</td>
+                        <td>{{ cust.lastname }} {{ cust.firstname }}</td>
+                        <td>¥{{ cust.total_spent | format_currency }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
   <script src="{{ url_for('static', filename='humberger.js') }}"></script>
 </body>
