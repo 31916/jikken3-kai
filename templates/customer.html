@@ -1,43 +1,54 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <title>顧客詳細・注文履歴</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='customer.css') }}">
+    <title>顧客情報</title>
 </head>
 <body>
-  <h1>👤 顧客詳細・注文履歴</h1>
+    <h1>顧客情報: {{ customer_info['lastname'] }} {{ customer_info['firstname'] }}</h1>
 
-  <div class="info">
-    <p><strong>顧客ID:</strong> {{ customer.customerid }}</p>
-    <p><strong>氏名:</strong> {{ customer.苗字 }} {{ customer.名前 }}</p>
-    <p><strong>年齢:</strong> {{ customer.年齢 }}</p>
-    <p><strong>性別:</strong> {{ customer.性別 }}</p>
-    <p><strong>都道府県:</strong> {{ customer.都道府県 }}</p>
-    <p><strong>最終注文日:</strong> {{ customer.最終注文日 }}</p>
-    <p><strong>累計注文金額:</strong> ¥{{ customer.注文合計金額|format_currency }}</p>
-  </div>
+    <p>生年月日: {{ customer_info['birthday'] }} | 年齢: {{ customer_info['age'] }} | 性別: {{ '男性' if customer_info['sex']==1 else '女性' }}</p>
+    <p>都道府県: {{ customer_info['area'] }}</p>
 
-  <h2>🧾 注文履歴</h2>
-  <table>
-    <thead><tr>
-      <th>注文日</th><th>商品コード</th><th>商品カテゴリ</th>
-      <th>商品価格</th><th>注文数</th><th>合計注文金額</th>
-    </tr></thead>
-    <tbody>
-      {% for o in orders %}
-      <tr>
-        <td>{{ o.注文日 }}</td>
-        <td>{{ o.商品コード }}</td>
-        <td>{{ o.商品カテゴリ }}</td>
-        <td>¥{{ o.商品価格|format_currency }}</td>
-        <td>{{ o.注文数 }}</td>
-        <td>¥{{ o.合計注文金額|format_currency }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <div class="kpi">
+        <strong>累計注文回数:</strong> {{ total_orders }}<br>
+        <strong>累計購入金額:</strong> ¥ {{ total_spent|int|format_currency }}<br>
+        <strong>最終購入日:</strong> {{ last_order.strftime('%Y/%m/%d') }}
+    </div>
 
-  <p><a href="/">← 戻る</a></p>
+    <!-- グラフ表示 -->
+    <div>
+        {{ graph_html | safe }}
+    </div>
+
+    <!-- 注文履歴テーブル -->
+    <h2>注文履歴</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>注文日</th>
+                <th>注文番号</th>
+                <th>商品コード</th>
+                <th>カテゴリ</th>
+                <th>単価</th>
+                <th>数量</th>
+                <th>注文合計</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for order in cust_orders %}
+            <tr>
+                <td>{{ order['orderdate'].strftime('%Y/%m/%d') }}</td>
+                <td>{{ order['orderno'] }}</td>
+                <td>{{ order['orderitem'] }}</td>
+                <td>{{ order['orderitemcate'] }}</td>
+                <td>¥ {{ order['itemprice']|int|format_currency }}</td>
+                <td>{{ order['ordernum'] }}</td>
+                <td>¥ {{ order['orderprice']|int|format_currency }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
