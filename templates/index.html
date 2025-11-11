@@ -3,22 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ホームページ</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center; /* 中央揃えにする場合 */
-            padding-top: 50px;
-        }
-        h1 {
-            color: #333;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            display: inline-block; /* border-bottomを文字の幅に合わせる */
-        }
-    </style>
+    <title>ホーム | 経営分析ポータル</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
 </head>
 <body>
-    <h1>ホームページ</h1>
-    </body>
+    <!-- ヘッダー -->
+    <div class="header">
+        <a href="/" class="logo">
+            <span>&#x1F4C8;</span> AnalystPro
+        </a>
+        
+    </div>
+
+    <!-- カルーセルラッパー -->
+    <div class="carousel-wrapper">
+        <div id="carousel-container">
+            
+            <!-- スライド 1: 経営戦略ダッシュボード -->
+            <div class="carousel-item active" id="slide1">
+                <div class="item-text">
+                    <h2>📈 経営戦略</h2>
+                    <p>
+                        全社の主要な経営指標（KGI/KPI）をリアルタイムで可視化します。総売上、顧客数、平均単価などを俯瞰し、迅速な意思決定をサポートします。
+                    </p>
+                    <a href="dashboard" class="detail-button">詳細を見る</a>
+                </div>
+                <div class="item-image"></div>
+            </div>
+
+            <!-- スライド 2: 個別顧客分析 -->
+            <div class="carousel-item" id="slide2">
+                <div class="item-text">
+                    <h2>👤 個別顧客分析</h2>
+                    <p>
+                        特定の顧客IDを入力するだけで、その顧客の購入履歴、消費傾向、最終注文日などの詳細な情報を瞬時に把握できます。
+                    </p>
+                    <a href="search.html" class="detail-button">顧客を検索する</a>
+                </div>
+                <div class="item-image"></div>
+            </div>
+
+            <!-- スライド 3: 在庫＆リスク管理 -->
+            <div class="carousel-item" id="slide3">
+                <div class="item-text">
+                    <h2>📦 在庫＆リスク管理</h2>
+                    <p>
+                        全商品の現在の在庫状況を確認し、特に注文数に対して在庫が不足し、販売機会損失のリスクがある商品を自動で特定します。
+                    </p>
+                    <a href="stock.html" class="detail-button">在庫リストを見る</a>
+                </div>
+                <div class="item-image"></div>
+            </div>
+
+            <!-- 制御ボタン -->
+            <button id="prevButton" class="carousel-btn" aria-label="Previous Slide">
+                &#10094; <!-- 左向きの二重山括弧 (Unicode) -->
+            </button>
+            <button id="nextButton" class="carousel-btn" aria-label="Next Slide">
+                &#10095; <!-- 右向きの二重山括弧 (Unicode) -->
+            </button>
+            
+        </div>
+    </div>
+
+    <!-- フッター -->
+    <div class="footer">
+        &copy; 2025 AnalystPro Solutions. All rights reserved. | データ分析を次のレベルへ。
+    </div>
+
+    <!-- JavaScript (スライド機能) -->
+    <script src="{{ url_for('static', filename='home.js') }}"></script>
+</body>
 </html>

@@ -18,6 +18,14 @@ CUST_PATH = os.path.join(DATA_DIR, "cust.csv")
 ORDER_PATH = os.path.join(DATA_DIR, "order.csv")
 ITEM_STOCK_PATH = os.path.join(DATA_DIR, "itemstock.csv")
 
+# ==============================================================
+# 🏠 ① 新しいホームページ (ルート / )
+# ==============================================================
+@app.route('/', methods=['GET']) # 👈 ルート / にアクセスされたらこの関数を実行
+def home():
+    # データを必要としないシンプルな home.html をレンダリング
+    return render_template("index.html") 
+
 # ------------------------------
 # 金額フォーマット用フィルタ
 # ------------------------------
@@ -33,7 +41,7 @@ def format_currency(value):
 # ------------------------------
 # ① 経営戦略ダッシュボード
 # ------------------------------
-@app.route('/', methods=['GET'])
+@app.route('/dashboard', methods=['GET'])
 def index():
     gender_filter = request.args.get('gender')
     min_age_filter = request.args.get('min_age', type=int)
