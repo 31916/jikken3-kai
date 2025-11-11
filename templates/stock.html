@@ -1,11 +1,10 @@
-<h1>📦 在庫リスク分析</h1>
-
 <h2>在庫率10%未満の商品（上位5件）</h2>
 <table>
   <thead>
     <tr>
       <th>商品コード</th>
       {% if 'itemname' in low_stock_risk[0] %}<th>商品名</th>{% endif %}
+      {% if 'itemcate' in low_stock_risk[0] %}<th>カテゴリ</th>{% endif %}
       <th>総注文数</th>
       <th>現在在庫</th>
       <th>在庫率</th>
@@ -16,6 +15,7 @@
     <tr class="low-stock">
       <td>{{ i.itemcode }}</td>
       {% if 'itemname' in i %}<td>{{ i.itemname }}</td>{% endif %}
+      {% if 'itemcate' in i %}<td>{{ i.itemcate }}</td>{% endif %}
       <td>{{ i.total_ordered|format_currency }}</td>
       <td>{{ i.current_stock|format_currency }}</td>
       <td>{{ ('%.1f' % (i.stock_ratio * 100)) }}%</td>
@@ -24,24 +24,20 @@
   </tbody>
 </table>
 
-<!-- 🔹 検索フォーム -->
-<!-- 🔹 検索フォーム -->
+<!-- 🔹 検索フォーム（カテゴリプルダウン付き） -->
 <form method="get" action="/stock.html" class="search-form">
   <input type="text" name="itemcode" placeholder="商品コード" value="{{ search_params.itemcode }}">
-  
   {% if 'itemname' in item_analysis[0] %}
-  <input type="text" name="itemname" placeholder="商品名" value="{{ search_params.itemname }}">
+    <input type="text" name="itemname" placeholder="商品名" value="{{ search_params.itemname }}">
   {% endif %}
-
-  {% if 'itemcate' in item_analysis[0] %}
-  <select name="itemcate">
-    <option value="">-- カテゴリを選択 --</option>
-    {% for cate in categories %}
-      <option value="{{ cate }}" {% if search_params.itemcate == cate %}selected{% endif %}>{{ cate }}</option>
-    {% endfor %}
-  </select>
+  {% if categories %}
+    <select name="itemcate">
+      <option value="">-- カテゴリを選択 --</option>
+      {% for cate in categories %}
+        <option value="{{ cate }}" {% if search_params.itemcate == cate %}selected{% endif %}>{{ cate }}</option>
+      {% endfor %}
+    </select>
   {% endif %}
-
   <input type="number" step="0.01" name="min_stock_ratio" placeholder="最小在庫率(%)" value="{{ search_params.min_stock_ratio }}">
   <input type="number" step="0.01" name="max_stock_ratio" placeholder="最大在庫率(%)" value="{{ search_params.max_stock_ratio }}">
   <input type="number" name="min_ordered" placeholder="最小総注文数" value="{{ search_params.min_ordered }}">
@@ -49,13 +45,13 @@
   <button type="submit">検索</button>
 </form>
 
-
 <h2>全商品在庫一覧</h2>
 <table>
   <thead>
     <tr>
       <th>商品コード</th>
       {% if 'itemname' in item_analysis[0] %}<th>商品名</th>{% endif %}
+      {% if 'itemcate' in item_analysis[0] %}<th>カテゴリ</th>{% endif %}
       <th>総注文数</th>
       <th>現在在庫</th>
       <th>在庫率</th>
@@ -66,6 +62,7 @@
     <tr>
       <td>{{ i.itemcode }}</td>
       {% if 'itemname' in i %}<td>{{ i.itemname }}</td>{% endif %}
+      {% if 'itemcate' in i %}<td>{{ i.itemcate }}</td>{% endif %}
       <td>{{ i.total_ordered|format_currency }}</td>
       <td>{{ i.current_stock|format_currency }}</td>
       <td>{{ ('%.1f' % (i.stock_ratio * 100)) }}%</td>
