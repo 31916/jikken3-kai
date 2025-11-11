@@ -1,38 +1,40 @@
-<!doctype html>
-<html lang="ja">
-<head>
-    <meta charset="utf-8">
-    <title>顧客検索</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='humberger.css') }}">
-
-    
-</head>
-<body>
-    <header>
-        <div id="menu-icon" class="menu-icon">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-        </div>
-        <h1 style="margin: 0; font-size: 1.5em;">📊 顧客・在庫分析ダッシュボード</h1>
-    </header>
-
-    <nav id="sidebar" class="sidebar">
-        <ul>
-            <li><a href="/">経営戦略</a></li>
-            <li><a href="search.html">顧客ID検索</a></li>
-            <li><a href="stock.html">在庫リスト</a></li>
-        </ul>
-    </nav>
-    <h1>顧客ID検索</h1>
-    <form onsubmit="return goCustomer();">
-        顧客ID: <input type="text" id="customer_id" placeholder="顧客IDを入力">
-        <input type="submit" value="検索">
-    </form>
-
-    <script src="{{ url_for('static', filename='humberger.js') }}"></script>
-
-</body>
-</html>
+<form method="get" action="/stock.html">
+  <ul>
+    <li>
+      <label>商品名:
+        <input type="text" name="item" value="{{ search_params.item }}">
+      </label>
+    </li>
+    <li>
+      <label>カテゴリ:
+        <select name="itemcate">
+          <option value="">-- 全て --</option>
+          {% for cat in categories %}
+            <option value="{{ cat }}" {% if cat == search_params.itemcate %}selected{% endif %}>{{ cat }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </li>
+    <li>
+      <label>在庫率 min:
+        <input type="number" name="min_stock_ratio" value="{{ search_params.min_stock_ratio }}" step="0.1"> %
+      </label>
+    </li>
+    <li>
+      <label>在庫率 max:
+        <input type="number" name="max_stock_ratio" value="{{ search_params.max_stock_ratio }}" step="0.1"> %
+      </label>
+    </li>
+    <li>
+      <label>総注文数 min:
+        <input type="number" name="min_ordered" value="{{ search_params.min_ordered }}">
+      </label>
+    </li>
+    <li>
+      <label>総注文数 max:
+        <input type="number" name="max_ordered" value="{{ search_params.max_ordered }}">
+      </label>
+    </li>
+  </ul>
+  <button type="submit">検索</button>
+</form>
