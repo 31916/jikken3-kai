@@ -1,38 +1,21 @@
-
+# -*- coding: utf-8 -*-
 from flask import Flask, render_template, request
 import pandas as pd
 import plotly.express as px
 import plotly.io as pio
 import os
 
-# ------------------------------
-# Flask アプリ作成
-# ------------------------------
 app = Flask(__name__)
 
-# ------------------------------
-# データパス設定
-# ------------------------------
 DATA_DIR = "data"
 CUST_PATH = os.path.join(DATA_DIR, "cust.csv")
-ORDER_PATH = os.path.join(DATA_DIR, "order.csv")
+ITEM_PATH = os.path.join(DATA_DIR, "item.csv")
 ITEM_STOCK_PATH = os.path.join(DATA_DIR, "itemstock.csv")
+ORDER_PATH = os.path.join(DATA_DIR, "order.csv")
 
-# ------------------------------
-# 金額フォーマット用フィルタ
-# ------------------------------
-@app.template_filter('format_currency')
-def format_currency(value):
-    if value is None or pd.isna(value):
-        return "0"
-    try:
-        return f"{int(value):,}"
-    except Exception:
-        return str(value)
-
-# ------------------------------
-# ① 経営戦略ダッシュボード
-# ------------------------------
+# ===============================================
+# 📊 経営戦略・在庫管理ダッシュボード
+# ===============================================
 @app.route('/', methods=['GET'])
 def index():
     gender_filter = request.args.get('gender')
@@ -46,6 +29,7 @@ def index():
     except FileNotFoundError as e:
         return f"エラー: {e.filename} が見つかりません。", 500
 
+    # 列名を小文字化
     cust.columns = [c.lower() for c in cust.columns]
     order.columns = [c.lower() for c in order.columns]
     item_stock.columns = [c.lower() for c in item_stock.columns]
@@ -53,7 +37,7 @@ def index():
     order.rename(columns={'orderitem': 'itemcode'}, inplace=True)
     item_stock.rename(columns={'item': 'itemcode'}, inplace=True)
 
-    # フィルタ処理
+    # --- フィルタ処理 ---
     filtered_cust = cust.copy()
     if gender_filter and 'sex' in cust.columns:
         filtered_cust = filtered_cust[filtered_cust['sex'].astype(str) == gender_filter]
@@ -66,7 +50,7 @@ def index():
     filtered_customer_ids = filtered_cust['customerid'].unique()
     filtered_order = order[order['customerid'].isin(filtered_customer_ids)]
 
-    # 集計
+    # --- 集計処理 ---
     if not filtered_order.empty:
         summary = (
             filtered_order.groupby("customerid")
@@ -93,24 +77,6 @@ def index():
     top_freq = merged.sort_values("purchase_count", ascending=False).head(10)
     top_spend = merged.sort_values("total_spent", ascending=False).head(10)
 
-    # 在庫分析
-    order_stock_merged = pd.merge(
-        filtered_order,
-        item_stock[['itemcode', 'stock']],
-        on='itemcode',
-        how='left'
-    ).drop_duplicates(subset=['orderdate', 'orderno', 'itemcode'])
-
-    item_analysis = (
-        order_stock_merged.groupby('itemcode')
-        .agg(total_ordered=('ordernum', 'sum'), current_stock=('stock', 'max'))
-        .reset_index()
-    )
-    item_analysis['stock_ratio'] = item_analysis['current_stock'] / item_analysis['total_ordered']
-    low_stock_risk = item_analysis[
-        (item_analysis['total_ordered'] > 0) & (item_analysis['stock_ratio'] < 0.1)
-    ].sort_values('stock_ratio').head(5)
-
     return render_template(
         "dashboard.html",
         total_customers=int(total_customers),
@@ -118,16 +84,14 @@ def index():
         avg_sales=int(avg_sales),
         top_freq=top_freq.to_dict(orient="records"),
         top_spend=top_spend.to_dict(orient="records"),
-        low_stock_risk=low_stock_risk.to_dict(orient="records"),
-        item_analysis=item_analysis.to_dict(orient="records"),
         gender_filter=gender_filter,
         min_age_filter=min_age_filter,
         max_age_filter=max_age_filter,
     )
 
-# ------------------------------
-# ② 個別顧客詳細ページ
-# ------------------------------
+# ===============================================
+# 👤 個別顧客詳細ページ
+# ===============================================
 @app.route('/customer/<customer_id>', methods=['GET'])
 def customer_detail(customer_id):
     try:
@@ -141,7 +105,6 @@ def customer_detail(customer_id):
 
     order['orderdate'] = pd.to_datetime(order['orderdate'])
     cust_orders = order[order['customerid'].astype(str) == str(customer_id)].sort_values('orderdate')
-
     if cust_orders.empty:
         return f"顧客ID {customer_id} の注文履歴はありません"
 
@@ -149,7 +112,6 @@ def customer_detail(customer_id):
     total_spent = cust_orders['orderprice'].sum()
     last_order = cust_orders['orderdate'].max()
 
-    # グラフ作成
     fig = px.bar(
         cust_orders,
         x='orderdate',
@@ -171,61 +133,69 @@ def customer_detail(customer_id):
         cust_orders=cust_orders.to_dict(orient='records')
     )
 
-# ------------------------------
-# ③ 在庫管理ページ（複合検索対応）
-# ------------------------------
+# ===============================================
+# 💰 金額フォーマット
+# ===============================================
+@app.template_filter('format_currency')
+def format_currency(value):
+    if value is None or pd.isna(value):
+        return "0"
+    try:
+        return f"{int(value):,}"
+    except:
+        return str(value)
+
+# ===============================================
+# 📦 在庫管理ページ
+# ===============================================
 @app.route('/stock.html')
 def stock_page():
     # データ読み込み
-    order = pd.read_csv(ORDER_PATH, encoding='utf-8-sig')
+    item_master = pd.read_csv(ITEM_PATH, encoding='utf-8-sig')
     item_stock = pd.read_csv(ITEM_STOCK_PATH, encoding='utf-8-sig')
+    order = pd.read_csv(ORDER_PATH, encoding='utf-8-sig')
 
-    # 前処理
-    order.columns = [c.lower() for c in order.columns]
+    item_master.columns = [c.lower() for c in item_master.columns]
     item_stock.columns = [c.lower() for c in item_stock.columns]
-    order.rename(columns={'orderitem': 'itemcode'}, inplace=True)
-    item_stock.rename(columns={'item': 'itemcode'}, inplace=True)
+    order.columns = [c.lower() for c in order.columns]
+
+    # マスタ + 在庫結合
+    merged_items = pd.merge(item_master, item_stock, on='item', how='left')
+
+    # 注文 + 在庫結合
+    order_stock_merged = pd.merge(order, merged_items, left_on='orderitem', right_on='item', how='left')
+    order_stock_merged = order_stock_merged.drop_duplicates(subset=['orderdate','orderno','orderitem'])
 
     # 在庫分析
-    merge_cols = ['itemcode', 'itemname'] if 'itemname' in item_stock.columns else ['itemcode']
-    order_stock_merged = pd.merge(
-        order,
-        item_stock[merge_cols + ['stock']] if 'itemname' in item_stock.columns else item_stock[['itemcode', 'stock']],
-        on='itemcode',
-        how='left'
-    ).drop_duplicates(subset=['orderdate', 'orderno', 'itemcode'])
-
     item_analysis = (
-        order_stock_merged.groupby(merge_cols)
-        .agg(total_ordered=('ordernum', 'sum'), current_stock=('stock', 'max'))
+        order_stock_merged.groupby(['item','itemcate'])
+        .agg(total_ordered=('ordernum','sum'), current_stock=('stock','max'))
         .reset_index()
     )
     item_analysis['stock_ratio'] = item_analysis.apply(
-        lambda r: (r['current_stock'] / r['total_ordered']) if r['total_ordered'] else 0,
-        axis=1
+        lambda r: (r['current_stock']/r['total_ordered']) if r['total_ordered'] else 0, axis=1
     )
 
-    # --- 常に表示する低在庫リスク（10%未満 上位5件） ---
+    # 低在庫5件（常に表示）
     low_stock_risk = (
-        item_analysis[(item_analysis['total_ordered'] > 0) & (item_analysis['stock_ratio'] < 0.1)]
+        item_analysis[(item_analysis['total_ordered']>0) & (item_analysis['stock_ratio']<0.1)]
         .sort_values('stock_ratio')
         .head(5)
     )
 
-    # --- 複合検索（検索結果用） ---
-    search_item_analysis = item_analysis.copy()  # 検索結果用にコピー
-
-    itemcode_query = request.args.get('itemcode', '').strip()
-    itemname_query = request.args.get('itemname', '').strip()
+    # 検索処理
+    item_query = request.args.get('item','').strip()
+    cate_query = request.args.get('itemcate','').strip()
     min_stock_ratio = request.args.get('min_stock_ratio', type=float)
     max_stock_ratio = request.args.get('max_stock_ratio', type=float)
-    min_ordered = request.args.get('min_ordered', type=int)
-    max_ordered = request.args.get('max_ordered', type=int)
+    min_ordered = request.args.get('min_ordered', type=float)
+    max_ordered = request.args.get('max_ordered', type=float)
 
-    if itemcode_query:
-        search_item_analysis = search_item_analysis[search_item_analysis['itemcode'].str.contains(itemcode_query, case=False, na=False)]
-    if 'itemname' in search_item_analysis.columns and itemname_query:
-        search_item_analysis = search_item_analysis[search_item_analysis['itemname'].str.contains(itemname_query, case=False, na=False)]
+    search_item_analysis = item_analysis.copy()
+    if item_query:
+        search_item_analysis = search_item_analysis[search_item_analysis['item'].str.contains(item_query, case=False, na=False)]
+    if cate_query:
+        search_item_analysis = search_item_analysis[search_item_analysis['itemcate'].str.contains(cate_query, case=False, na=False)]
     if min_stock_ratio is not None:
         search_item_analysis = search_item_analysis[search_item_analysis['stock_ratio']*100 >= min_stock_ratio]
     if max_stock_ratio is not None:
@@ -235,30 +205,29 @@ def stock_page():
     if max_ordered is not None:
         search_item_analysis = search_item_analysis[search_item_analysis['total_ordered'] <= max_ordered]
 
+    search_params = {
+        "item": item_query,
+        "itemcate": cate_query,
+        "min_stock_ratio": min_stock_ratio if min_stock_ratio is not None else '',
+        "max_stock_ratio": max_stock_ratio if max_stock_ratio is not None else '',
+        "min_ordered": min_ordered if min_ordered is not None else '',
+        "max_ordered": max_ordered if max_ordered is not None else ''
+    }
+
     return render_template(
         'stock.html',
-        low_stock_risk=low_stock_risk.to_dict(orient='records'),  # 常に表示
-        item_analysis=search_item_analysis.to_dict(orient='records'),  # 検索結果
-        search_params={
-            'itemcode': itemcode_query,
-            'itemname': itemname_query,
-            'min_stock_ratio': min_stock_ratio,
-            'max_stock_ratio': max_stock_ratio,
-            'min_ordered': min_ordered,
-            'max_ordered': max_ordered
-        }
+        low_stock_risk=low_stock_risk.to_dict(orient='records'),
+        item_analysis=search_item_analysis.to_dict(orient='records'),
+        search_params=search_params
     )
 
-
-# ------------------------------
-# サーチページ
-# ------------------------------
+# ===============================================
+# 検索ページ（顧客ID検索）
+# ===============================================
 @app.route('/search.html')
 def search_page():
     return render_template('search.html')
 
-# ------------------------------
-# Flask 実行
-# ------------------------------
+
 if __name__ == "__main__":
     app.run(debug=True)
