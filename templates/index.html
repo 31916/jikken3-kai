@@ -1,71 +1,24 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
-  <title>顧客購買分析ダッシュボード</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ホームページ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center; /* 中央揃えにする場合 */
+            padding-top: 50px;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            display: inline-block; /* border-bottomを文字の幅に合わせる */
+        }
+    </style>
 </head>
 <body>
-
-  <h1>顧客購買分析ダッシュボード</h1>
-
-  <!-- KPI -->
-  <div class="kpi-box">
-    <div class="kpi">
-      <h2>総顧客数</h2>
-      <p>{{ total_customers }}</p>
-    </div>
-    <div class="kpi">
-      <h2>総購入金額</h2>
-      <p>¥ {{ "{:,}".format(total_sales) }}</p>
-    </div>
-    <div class="kpi">
-      <h2>平均購入金額</h2>
-      <p>¥ {{ "{:,}".format(avg_sales) }}</p>
-    </div>
-  </div>
-
-  <!-- 購入頻度TOP -->
-  <div class="section">
-    <h3>購入頻度が高い顧客 TOP10</h3>
-    <table>
-      <tr>
-        <th>顧客ID</th><th>氏名</th><th>性別</th><th>地域</th><th>購入回数</th><th>累計購入金額</th><th>最終注文日</th>
-      </tr>
-      {% for c in top_freq %}
-      <tr>
-        <td>{{ c.customerid }}</td>
-        <td>{{ c.lastname }} {{ c.firstname }}</td>
-        <td>{{ c.sex }}</td>
-        <td>{{ c.area }}</td>
-        <td>{{ c.purchase_count }}</td>
-        <td>¥ {{ "{:,}".format(c.total_spent|int) }}</td>
-        <td>{{ c.last_order }}</td>
-      </tr>
-      {% endfor %}
-    </table>
-  </div>
-
-  <!-- 高額購入TOP -->
-  <div class="section">
-    <h3>高額購入顧客 TOP10</h3>
-    <table>
-      <tr>
-        <th>顧客ID</th><th>氏名</th><th>性別</th><th>地域</th><th>購入回数</th><th>累計購入金額</th><th>最終注文日</th>
-      </tr>
-      {% for c in top_spend %}
-      <tr>
-        <td>{{ c.customerid }}</td>
-        <td>{{ c.lastname }} {{ c.firstname }}</td>
-        <td>{{ c.sex }}</td>
-        <td>{{ c.area }}</td>
-        <td>{{ c.purchase_count }}</td>
-        <td>¥ {{ "{:,}".format(c.total_spent|int) }}</td>
-        <td>{{ c.last_order }}</td>
-      </tr>
-      {% endfor %}
-    </table>
-  </div>
-
-</body>
+    <h1>ホームページ</h1>
+    </body>
 </html>
