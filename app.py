@@ -179,19 +179,29 @@ def stock_page():
     # データ読み込み
     order = pd.read_csv(ORDER_PATH, encoding='utf-8-sig')
     item_stock = pd.read_csv(ITEM_STOCK_PATH, encoding='utf-8-sig')
+    item_master = pd.read_csv(os.path.join(DATA_DIR, 'item.csv'), encoding='utf-8-sig')
 
     # 前処理
     order.columns = [c.lower() for c in order.columns]
     item_stock.columns = [c.lower() for c in item_stock.columns]
-    order.rename(columns={'orderitem': 'itemcode'}, inplace=True)
+    item_master.columns = [c.lower() for c in item_master.columns]
+
+    order.rename(columns={'orderitem': 'itemcode', 'orderitemcate': 'itemcate'}, inplace=True)
     item_stock.rename(columns={'item': 'itemcode'}, inplace=True)
+    item_master.rename(columns={'item': 'itemcode', 'itemcate': 'itemcate'}, inplace=True)
+
+    # item_master と item_stock をマージして商品情報を作成
+    item_info = pd.merge(item_master, item_stock, on='itemcode', how='left')
 
     # 在庫分析
-    merge_cols = ['itemcode', 'itemname'] if 'itemname' in item_stock.columns else ['itemcode']
+    merge_cols = ['itemcode', 'itemcate']
+    if 'itemname' in item_info.columns:
+        merge_cols.append('itemname')
+
     order_stock_merged = pd.merge(
         order,
-        item_stock[merge_cols + ['stock']] if 'itemname' in item_stock.columns else item_stock[['itemcode', 'stock']],
-        on='itemcode',
+        item_info[merge_cols + ['stock']],
+        on=['itemcode', 'itemcate'] if 'itemcate' in merge_cols else ['itemcode'],
         how='left'
     ).drop_duplicates(subset=['orderdate', 'orderno', 'itemcode'])
 
@@ -205,16 +215,17 @@ def stock_page():
         axis=1
     )
 
-    # 🔹 在庫率10%未満の商品（上位5件） → ここでは検索をかけない
+    # 🔹 在庫率10%未満の商品（上位5件） → 検索無関係
     low_stock_risk = (
         item_analysis[(item_analysis['total_ordered'] > 0) & (item_analysis['stock_ratio'] < 0.1)]
         .sort_values('stock_ratio')
         .head(5)
     )
 
-    # --- 複合検索（item_analysis のみに適用） ---
+    # --- 複合検索 ---
     itemcode_query = request.args.get('itemcode', '').strip()
     itemname_query = request.args.get('itemname', '').strip()
+    itemcate_query = request.args.get('itemcate', '').strip()
     min_stock_ratio = request.args.get('min_stock_ratio', type=float)
     max_stock_ratio = request.args.get('max_stock_ratio', type=float)
     min_ordered = request.args.get('min_ordered', type=int)
@@ -224,27 +235,31 @@ def stock_page():
 
     if itemcode_query:
         filtered_analysis = filtered_analysis[filtered_analysis['itemcode'].str.contains(itemcode_query, case=False, na=False)]
-
     if 'itemname' in filtered_analysis.columns and itemname_query:
         filtered_analysis = filtered_analysis[filtered_analysis['itemname'].str.contains(itemname_query, case=False, na=False)]
-
+    if 'itemcate' in filtered_analysis.columns and itemcate_query:
+        filtered_analysis = filtered_analysis[filtered_analysis['itemcate'] == itemcate_query]
     if min_stock_ratio is not None:
         filtered_analysis = filtered_analysis[filtered_analysis['stock_ratio']*100 >= min_stock_ratio]
     if max_stock_ratio is not None:
         filtered_analysis = filtered_analysis[filtered_analysis['stock_ratio']*100 <= max_stock_ratio]
-
     if min_ordered is not None:
         filtered_analysis = filtered_analysis[filtered_analysis['total_ordered'] >= min_ordered]
     if max_ordered is not None:
         filtered_analysis = filtered_analysis[filtered_analysis['total_ordered'] <= max_ordered]
 
+    # プルダウン用のカテゴリリスト（重複除去・ソート）
+    categories = sorted(item_analysis['itemcate'].dropna().unique()) if 'itemcate' in item_analysis.columns else []
+
     return render_template(
         'stock.html',
         low_stock_risk=low_stock_risk.to_dict(orient='records'),
         item_analysis=filtered_analysis.to_dict(orient='records'),
+        categories=categories,
         search_params={
             'itemcode': itemcode_query,
             'itemname': itemname_query,
+            'itemcate': itemcate_query,
             'min_stock_ratio': min_stock_ratio,
             'max_stock_ratio': max_stock_ratio,
             'min_ordered': min_ordered,
