@@ -78,7 +78,7 @@ def index():
     top_freq = merged.sort_values("purchase_count", ascending=False).head(10)
     top_spend = merged.sort_values("total_spent", ascending=False).head(10)
 
-    # --- 在庫分析 ---
+    #--- 在庫分析 ---
     order_stock_merged = pd.merge(
         filtered_order,
         item_stock[['itemcode', 'stock']],
@@ -112,7 +112,7 @@ def index():
     )
 
 # ==============================================================
-# 👤 ② 個別顧客詳細ページ（旧 customer() の移植版）
+# 👤 ② 個別顧客詳細ページ
 # ==============================================================
 @app.route('/customer/<customer_id>', methods=['GET'])
 def customer_detail(customer_id):
@@ -174,9 +174,61 @@ def format_currency(value):
 def search_page():
     return render_template('search.html')
 
+
+# ==============================================================
+# 📦 ③ 在庫管理ページ
+# ==============================================================
 @app.route('/stock.html')
 def stock_page():
-    return render_template('stock.html')
+    import pandas as pd
+    import os
+
+    DATA_DIR = "data"
+    ORDER_PATH = os.path.join(DATA_DIR, "order.csv")
+    ITEM_STOCK_PATH = os.path.join(DATA_DIR, "itemstock.csv")
+
+    # データ読み込み
+    order = pd.read_csv(ORDER_PATH, encoding='utf-8-sig')
+    item_stock = pd.read_csv(ITEM_STOCK_PATH, encoding='utf-8-sig')
+
+    # 前処理（index() と同じ規約にそろえる）
+    order.columns = [c.lower() for c in order.columns]
+    item_stock.columns = [c.lower() for c in item_stock.columns]
+    order.rename(columns={'orderitem': 'itemcode'}, inplace=True)
+    item_stock.rename(columns={'item': 'itemcode'}, inplace=True)
+
+    # 在庫分析（index() と同じロジック）
+    order_stock_merged = pd.merge(
+        order,
+        item_stock[['itemcode', 'stock']],
+        on='itemcode',
+        how='left'
+    ).drop_duplicates(subset=['orderdate', 'orderno', 'itemcode'])
+
+    item_analysis = (
+        order_stock_merged.groupby('itemcode')
+        .agg(total_ordered=('ordernum', 'sum'), current_stock=('stock', 'max'))
+        .reset_index()
+    )
+
+    # 0除算ケア：total_ordered==0 は在庫率0に
+    item_analysis['stock_ratio'] = item_analysis.apply(
+        lambda r: (r['current_stock'] / r['total_ordered']) if r['total_ordered'] else 0,
+        axis=1
+    )
+
+    low_stock_risk = (
+        item_analysis[(item_analysis['total_ordered'] > 0) & (item_analysis['stock_ratio'] < 0.1)]
+        .sort_values('stock_ratio')
+        .head(5)
+    )
+
+    return render_template(
+        'stock.html',
+        low_stock_risk=low_stock_risk.to_dict(orient='records'),
+        item_analysis=item_analysis.to_dict(orient='records')
+    )
+
 
 if __name__ == "__main__":
     app.run(debug=True)
