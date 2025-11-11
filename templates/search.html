@@ -2,23 +2,22 @@
 <html lang="ja">
 <head>
     <meta charset="utf-8">
-    <title>顧客検索</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='humberger.css') }}">
-
-    
+    <title>顧客ID検索</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='search.css') }}">
 </head>
 <body>
+    <!-- ヘッダー -->
     <header>
         <div id="menu-icon" class="menu-icon">
             <div class="bar"></div>
             <div class="bar"></div>
             <div class="bar"></div>
         </div>
-        <h1 style="margin: 0; font-size: 1.5em;">📊 顧客・在庫分析ダッシュボード</h1>
+        <h1>📊 顧客・在庫分析ダッシュボード</h1>
     </header>
 
+    <!-- サイドバー -->
     <nav id="sidebar" class="sidebar">
         <ul>
             <li><a href="/">経営戦略</a></li>
@@ -26,13 +25,17 @@
             <li><a href="stock.html">在庫リスト</a></li>
         </ul>
     </nav>
-    <h1>顧客ID検索</h1>
-    <form onsubmit="return goCustomer();">
-        顧客ID: <input type="text" id="customer_id" placeholder="顧客IDを入力">
-        <input type="submit" value="検索">
-    </form>
 
-    <script src="{{ url_for('static', filename='humberger.js') }}"></script>
+    <!-- メインコンテンツ -->
+    <main>
+        <h2>顧客ID検索</h2>
+        <form onsubmit="return goCustomer();" class="search-form">
+            <input type="text" id="customer_id" placeholder="顧客IDを入力">
+            <input type="submit" value="検索">
+        </form>
+    </main>
 
+    <!-- JS -->
+    <script src="{{ url_for('static', filename='search.js') }}"></script>
 </body>
 </html>

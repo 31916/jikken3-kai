@@ -1,0 +1,113 @@
+/* 全体リセット */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+/* ヘッダー */
+header {
+    display: flex;
+    align-items: center;
+    padding: 0.5em 1em;
+    background: #1E1E2F;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1001;
+}
+
+header h1 {
+    margin-left: 1em;
+    font-size: 1.5em;
+}
+
+/* ハンバーガーアイコン */
+.menu-icon {
+    width: 30px;
+    cursor: pointer;
+}
+.menu-icon .bar {
+    height: 3px;
+    background-color: white;
+    margin: 5px 0;
+    transition: 0.4s;
+}
+.menu-icon.open .bar:nth-child(1) {
+    transform: rotate(-45deg) translate(-6px, 6px);
+}
+.menu-icon.open .bar:nth-child(2) {
+    opacity: 0;
+}
+.menu-icon.open .bar:nth-child(3) {
+    transform: rotate(45deg) translate(-6px, -6px);
+}
+
+/* サイドバー */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100%;
+    background-color: #1E1E2F;
+    color: white;
+    padding-top: 60px;
+    transition: left 0.3s ease;
+    z-index: 1000;
+}
+.sidebar.open {
+    left: 0;
+}
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+.sidebar li {
+    margin: 1em 0;
+}
+.sidebar li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    display: block;
+    padding: 0.5em 1em;
+    transition: background 0.2s;
+}
+.sidebar li a:hover {
+    background-color: #343454;
+    border-radius: 4px;
+}
+
+/* メインコンテンツ */
+main {
+    padding: 100px 20px 20px 20px;
+}
+
+/* 検索フォーム */
+.search-form {
+    background: white;
+    padding: 1.5em 2em;
+    max-width: 400px;
+    margin: 2em auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 0.5em;
+}
+.search-form input[type="text"] {
+    flex: 1;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.search-form input[type="submit"] {
+    padding: 0.5em 1em;
+    border: none;
+    background-color: #1E1E2F;
+    color: white;
+    border-radius: 4px;
+    cursor:

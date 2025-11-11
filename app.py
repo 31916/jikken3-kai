@@ -128,6 +128,9 @@ def index():
 # ------------------------------
 # ② 個別顧客詳細ページ
 # ------------------------------
+# ------------------------------
+# ② 個別顧客詳細ページ
+# ------------------------------
 @app.route('/customer/<customer_id>', methods=['GET'])
 def customer_detail(customer_id):
     try:
@@ -161,8 +164,9 @@ def customer_detail(customer_id):
 
     customer_info = cust[cust['customerid'].astype(str) == str(customer_id)].to_dict(orient='records')[0]
 
+    # ← ここを修正
     return render_template(
-        'customer_detail.html',
+        'customer.html',  # ← customer_detail.html から変更
         customer_info=customer_info,
         total_orders=total_orders,
         total_spent=total_spent,

@@ -2,53 +2,79 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='customer.css') }}">
     <title>顧客情報</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='customer.css') }}">
 </head>
 <body>
-    <h1>顧客情報: {{ customer_info['lastname'] }} {{ customer_info['firstname'] }}</h1>
+    <!-- ヘッダー -->
+    <header>
+        <div id="menu-icon" class="menu-icon">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <h1>📊 顧客情報ダッシュボード</h1>
+    </header>
 
-    <p>生年月日: {{ customer_info['birthday'] }} | 年齢: {{ customer_info['age'] }} | 性別: {{ '男性' if customer_info['sex']==1 else '女性' }}</p>
-    <p>都道府県: {{ customer_info['area'] }}</p>
+    <!-- サイドバー -->
+    <nav id="sidebar" class="sidebar">
+        <ul>
+            <li><a href="/">経営戦略</a></li>
+            <li><a href="search.html">顧客ID検索</a></li>
+            <li><a href="stock.html">在庫リスト</a></li>
+        </ul>
+    </nav>
 
-    <div class="kpi">
-        <strong>累計注文回数:</strong> {{ total_orders }}<br>
-        <strong>累計購入金額:</strong> ¥ {{ total_spent|int|format_currency }}<br>
-        <strong>最終購入日:</strong> {{ last_order.strftime('%Y/%m/%d') }}
-    </div>
+    <!-- メインコンテンツ -->
+    <main>
+        <h2>顧客情報: {{ customer_info['lastname'] }} {{ customer_info['firstname'] }}</h2>
 
-    <!-- グラフ表示 -->
-    <div>
-        {{ graph_html | safe }}
-    </div>
+        <p>生年月日: {{ customer_info['birthday'] }} | 年齢: {{ customer_info['age'] }} | 性別: {{ '男性' if customer_info['sex']==1 else '女性' }}</p>
+        <p>都道府県: {{ customer_info['area'] }}</p>
 
-    <!-- 注文履歴テーブル -->
-    <h2>注文履歴</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>注文日</th>
-                <th>注文番号</th>
-                <th>商品コード</th>
-                <th>カテゴリ</th>
-                <th>単価</th>
-                <th>数量</th>
-                <th>注文合計</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for order in cust_orders %}
-            <tr>
-                <td>{{ order['orderdate'].strftime('%Y/%m/%d') }}</td>
-                <td>{{ order['orderno'] }}</td>
-                <td>{{ order['orderitem'] }}</td>
-                <td>{{ order['orderitemcate'] }}</td>
-                <td>¥ {{ order['itemprice']|int|format_currency }}</td>
-                <td>{{ order['ordernum'] }}</td>
-                <td>¥ {{ order['orderprice']|int|format_currency }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <div class="kpi">
+            <strong>累計注文回数:</strong> {{ total_orders }}<br>
+            <strong>累計購入金額:</strong> ¥ {{ total_spent|int|format_currency }}<br>
+            <strong>最終購入日:</strong> {{ last_order.strftime('%Y/%m/%d') }}
+        </div>
+
+        <!-- グラフ表示 -->
+        <div class="graph">
+            {{ graph_html | safe }}
+        </div>
+
+        <!-- 注文履歴テーブル -->
+        <h2>注文履歴</h2>
+        <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>注文日</th>
+                    <th>注文番号</th>
+                    <th>商品コード</th>
+                    <th>カテゴリ</th>
+                    <th>単価</th>
+                    <th>数量</th>
+                    <th>注文合計</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for order in cust_orders %}
+                <tr>
+                    <td>{{ order['orderdate'].strftime('%Y/%m/%d') }}</td>
+                    <td>{{ order['orderno'] }}</td>
+                    <td>{{ order['orderitem'] }}</td>
+                    <td>{{ order['orderitemcate'] }}</td>
+                    <td>¥ {{ order['itemprice']|int|format_currency }}</td>
+                    <td>{{ order['ordernum'] }}</td>
+                    <td>¥ {{ order['orderprice']|int|format_currency }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='customer.js') }}"></script>
 </body>
 </html>
