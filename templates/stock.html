@@ -1,74 +1,62 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="utf-8">
-  <title>在庫リスク分析</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
+<h1>📦 在庫リスク分析</h1>
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='humberger.css') }}">
-  
-</head>
-<body>
-  <header>
-        <div id="menu-icon" class="menu-icon">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-        </div>
-        <h1 style="margin: 0; font-size: 1.5em;">📊 顧客・在庫分析ダッシュボード</h1>
-  </header>
+<!-- 検索フォーム -->
+<form method="get" action="/stock.html" class="search-form">
+  <input type="text" name="itemcode" placeholder="商品コード" value="{{ search_params.itemcode }}">
+  {% if 'itemname' in item_analysis[0] %}
+  <input type="text" name="itemname" placeholder="商品名" value="{{ search_params.itemname }}">
+  {% endif %}
+  <input type="number" step="0.01" name="min_stock_ratio" placeholder="最小在庫率(%)" value="{{ search_params.min_stock_ratio }}">
+  <input type="number" step="0.01" name="max_stock_ratio" placeholder="最大在庫率(%)" value="{{ search_params.max_stock_ratio }}">
+  <input type="number" name="min_ordered" placeholder="最小総注文数" value="{{ search_params.min_ordered }}">
+  <input type="number" name="max_ordered" placeholder="最大総注文数" value="{{ search_params.max_ordered }}">
+  <button type="submit">検索</button>
+</form>
 
-  <nav id="sidebar" class="sidebar">
-        <ul>
-            <li><a href="/">経営戦略</a></li>
-            <li><a href="search.html">顧客ID検索</a></li>
-            <li><a href="stock.html">在庫リスト</a></li>
-        </ul>
-  </nav>
-  <h1>📦 在庫リスク分析</h1>
-
-  <h2>在庫率10%未満の商品（上位5件）</h2>
-  <table>
-    <thead><tr>
+<h2>在庫率10%未満の商品（上位5件）</h2>
+<table>
+  <thead>
+    <tr>
       <th>商品コード</th>
+      {% if 'itemname' in item_analysis[0] %}<th>商品名</th>{% endif %}
       <th>総注文数</th>
       <th>現在在庫</th>
       <th>在庫率</th>
-    </tr></thead>
-    <tbody>
-      {% for i in low_stock_risk %}
-      <tr class="low-stock">
-        <td>{{ i.itemcode }}</td>
-        <td>{{ i.total_ordered|format_currency }}</td>
-        <td>{{ i.current_stock|format_currency }}</td>
-        <td>{{ ('%.1f' % (i.stock_ratio * 100)) }}%</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    </tr>
+  </thead>
+  <tbody>
+    {% for i in low_stock_risk %}
+    <tr class="low-stock">
+      <td>{{ i.itemcode }}</td>
+      {% if 'itemname' in i %}<td>{{ i.itemname }}</td>{% endif %}
+      <td>{{ i.total_ordered|format_currency }}</td>
+      <td>{{ i.current_stock|format_currency }}</td>
+      <td>{{ ('%.1f' % (i.stock_ratio * 100)) }}%</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
-  <h2>全商品在庫一覧</h2>
-  <table>
-    <thead><tr>
+<h2>全商品在庫一覧</h2>
+<table>
+  <thead>
+    <tr>
       <th>商品コード</th>
+      {% if 'itemname' in item_analysis[0] %}<th>商品名</th>{% endif %}
       <th>総注文数</th>
       <th>現在在庫</th>
       <th>在庫率</th>
-    </tr></thead>
-    <tbody>
-      {% for i in item_analysis %}
-      <tr>
-        <td>{{ i.itemcode }}</td>
-        <td>{{ i.total_ordered|format_currency }}</td>
-        <td>{{ i.current_stock|format_currency }}</td>
-        <td>{{ ('%.1f' % (i.stock_ratio * 100)) }}%</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-  <p><a href="/">← 戻る</a></p>
-
-  <script src="{{ url_for('static', filename='humberger.js') }}"></script>
-</body>
-</html>
+    </tr>
+  </thead>
+  <tbody>
+    {% for i in item_analysis %}
+    <tr>
+      <td>{{ i.itemcode }}</td>
+      {% if 'itemname' in i %}<td>{{ i.itemname }}</td>{% endif %}
+      <td>{{ i.total_ordered|format_currency }}</td>
+      <td>{{ i.current_stock|format_currency }}</td>
+      <td>{{ ('%.1f' % (i.stock_ratio * 100)) }}%</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
