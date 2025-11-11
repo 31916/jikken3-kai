@@ -170,5 +170,11 @@ def format_currency(value):
     except Exception:
         return str(value)
 
+@app.route('/search.html')
+def search_page():
+    return render_template('search.html')
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
