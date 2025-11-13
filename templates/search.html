@@ -14,7 +14,7 @@
             <div class="bar"></div>
             <div class="bar"></div>
         </div>
-        <h1>📊 顧客・在庫分析ダッシュボード</h1>
+        <h1>顧客ID検索</h1>
     </header>
 
     <!-- サイドバー -->
@@ -29,11 +29,13 @@
 
     <!-- メインコンテンツ -->
     <main>
-        <h2>顧客ID検索</h2>
+        <h2> </h2>
         <form onsubmit="return goCustomer();" class="search-form">
             <input type="text" id="customer_id" placeholder="顧客IDを入力">
             <input type="submit" value="検索">
         </form>
+
+        <div id="error-message" class="error-text"></div>
     </main>
 
     <!-- JS -->

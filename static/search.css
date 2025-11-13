@@ -89,25 +89,68 @@ main {
 
 /* 検索フォーム */
 .search-form {
-    background: white;
-    padding: 1.5em 2em;
+    /* 背景色を白、内側の余白を少し広めに */
+    background-color: white;
+    padding: 1.2em 1.5em; 
     max-width: 400px;
     margin: 2em auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    /* 角の丸みを調整 */
+    border-radius: 25px; /* または 10px など、お好みの丸みに */
+    /* 影を柔らかく、控えめに */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+    /* 配置 */
     display: flex;
-    gap: 0.5em;
+    align-items: center; /* 垂直方向中央揃え */
+    gap: 0.75em;
+    /* フォーム全体の境界線は削除し、影で立体感を出す */
 }
+
+/* テキスト入力欄 */
 .search-form input[type="text"] {
     flex: 1;
-    padding: 0.5em;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 0.75em; /* 縦の余白を増やし、押しやすく */
+    border: 2px solid #EEE; /* 細いグレーの境界線 */
+    border-radius: 20px; /* フォーム全体と合わせた丸み */
+    transition: border-color 0.3s; /* ホバー時の変化を滑らかに */
+    font-size: 1em;
 }
+
+/* 入力欄フォーカス時（クリック時）のスタイル */
+.search-form input[type="text"]:focus {
+    border-color: #007bff; /* 青など、テーマカラーに変更 */
+    outline: none; /* デフォルトの青い枠線を削除 */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3); /* 軽い影を追加 */
+}
+
+/* 検索ボタン */
 .search-form input[type="submit"] {
-    padding: 0.5em 1em;
+    padding: 0.7em 1.2em; /* 適切なサイズ */
     border: none;
-    background-color: #1E1E2F;
+    /* 背景色をネイビーから、少し明るめのモダンな色（濃い青や黒）に変更 */
+    background-color: #2D3E50; 
     color: white;
-    border-radius: 4px;
-    cursor:
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.1s; /* ホバーエフェクトを滑らかに */
+}
+
+/* 検索ボタン ホバー時 */
+.search-form input[type="submit"]:hover {
+    background-color: #3C5268; /* 少し明るい色に変化 */
+}
+
+/* 検索ボタン クリック時 (オプション) */
+.search-form input[type="submit"]:active {
+    transform: translateY(1px); /* ボタンが少し沈むエフェクト */
+}
+/* エラーメッセージのスタイル */
+.error-text {
+    color: #D32F2F; /* 濃い赤色 */
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 1em; /* フォームとの間にスペースを設ける */
+    /* 初期状態では非表示にしておくこともできます */
+    /* display: none; */ 
+}
