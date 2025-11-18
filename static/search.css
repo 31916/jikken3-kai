@@ -127,7 +127,7 @@ main {
     padding: 0.7em 1.2em; /* 適切なサイズ */
     border: none;
     /* 背景色をネイビーから、少し明るめのモダンな色（濃い青や黒）に変更 */
-    background-color: #2D3E50; 
+    background-color: #333; 
     color: white;
     border-radius: 20px;
     cursor: pointer;
