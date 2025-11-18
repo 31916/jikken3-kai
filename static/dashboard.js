@@ -241,13 +241,13 @@ const segData = window.segDataFromFlask;
     el.style.stroke = "#333";
     el.style.strokeWidth = "1";
 
-    // ブラウザ標準のツールチップ（おまけ）
-    el.setAttribute("title", `${jpName}: ¥${Number(region.total_sales).toLocaleString()}`);
-
     // カスタム用データ（ここ大事）
     el.dataset.jpName = jpName;
     el.dataset.sales  = region.total_sales;
   });
+
+  svg.querySelectorAll("title").forEach(t => t.remove());
+  
 })();
 
 // -----------------------
