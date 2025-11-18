@@ -16,11 +16,13 @@ const regionData = window.regionDataFromFlask;
             datasets: [{
                 label: "地域別売上",
                 data: sales,
-                borderWidth: 1
+                borderWidth: 1,
+                maxBarThickness: 50
             }]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 y: {
                     ticks: {
@@ -163,55 +165,54 @@ const segData = window.segDataFromFlask;
   if (!svg || !data.length) return;
 
   const prefMap = {
-  "北海道": "hokkaido",
-  "青森県": "aomori",
-  "岩手県": "iwate",
-  "宮城県": "miyagi",
-  "秋田県": "akita",
-  "山形県": "yamagata",
-  "福島県": "fukushima",
-  "茨城県": "ibaraki",
-  "栃木県": "tochigi",
-  "群馬県": "gunma",
-  "埼玉県": "saitama",
-  "千葉県": "chiba",
-  "東京都": "tokyo",
-  "神奈川県": "kanagawa",
-  "新潟県": "niigata",
-  "富山県": "toyama",
-  "石川県": "ishikawa",
-  "福井県": "fukui",
-  "山梨県": "yamanashi",
-  "長野県": "nagano",
-  "岐阜県": "gifu",
-  "静岡県": "shizuoka",
-  "愛知県": "aichi",
-  "三重県": "mie",
-  "滋賀県": "shiga",
-  "京都府": "kyoto",
-  "大阪府": "osaka",
-  "兵庫県": "hyogo",
-  "奈良県": "nara",
-  "和歌山県": "wakayama",
-  "鳥取県": "tottori",
-  "島根県": "shimane",
-  "岡山県": "okayama",
-  "広島県": "hiroshima",
-  "山口県": "yamaguchi",
-  "徳島県": "tokushima",
-  "香川県": "kagawa",
-  "愛媛県": "ehime",
-  "高知県": "kochi",
-  "福岡県": "fukuoka",
-  "佐賀県": "saga",
-  "長崎県": "nagasaki",
-  "熊本県": "kumamoto",
-  "大分県": "oita",
-  "宮崎県": "miyazaki",
-  "鹿児島県": "kagoshima",
-  "沖縄県": "okinawa"
-};
-
+    "北海道": "hokkaido",
+    "青森県": "aomori",
+    "岩手県": "iwate",
+    "宮城県": "miyagi",
+    "秋田県": "akita",
+    "山形県": "yamagata",
+    "福島県": "fukushima",
+    "茨城県": "ibaraki",
+    "栃木県": "tochigi",
+    "群馬県": "gunma",
+    "埼玉県": "saitama",
+    "千葉県": "chiba",
+    "東京都": "tokyo",
+    "神奈川県": "kanagawa",
+    "新潟県": "niigata",
+    "富山県": "toyama",
+    "石川県": "ishikawa",
+    "福井県": "fukui",
+    "山梨県": "yamanashi",
+    "長野県": "nagano",
+    "岐阜県": "gifu",
+    "静岡県": "shizuoka",
+    "愛知県": "aichi",
+    "三重県": "mie",
+    "滋賀県": "shiga",
+    "京都府": "kyoto",
+    "大阪府": "osaka",
+    "兵庫県": "hyogo",
+    "奈良県": "nara",
+    "和歌山県": "wakayama",
+    "鳥取県": "tottori",
+    "島根県": "shimane",
+    "岡山県": "okayama",
+    "広島県": "hiroshima",
+    "山口県": "yamaguchi",
+    "徳島県": "tokushima",
+    "香川県": "kagawa",
+    "愛媛県": "ehime",
+    "高知県": "kochi",
+    "福岡県": "fukuoka",
+    "佐賀県": "saga",
+    "長崎県": "nagasaki",
+    "熊本県": "kumamoto",
+    "大分県": "oita",
+    "宮崎県": "miyazaki",
+    "鹿児島県": "kagoshima",
+    "沖縄県": "okinawa"
+  };
 
   // 売上の min / max
   const values = data.map(d => d.total_sales);
@@ -240,10 +241,64 @@ const segData = window.segDataFromFlask;
     el.style.stroke = "#333";
     el.style.strokeWidth = "1";
 
-    // ツールチップ
+    // ブラウザ標準のツールチップ（おまけ）
     el.setAttribute("title", `${jpName}: ¥${Number(region.total_sales).toLocaleString()}`);
+
+    // カスタム用データ（ここ大事）
+    el.dataset.jpName = jpName;
+    el.dataset.sales  = region.total_sales;
   });
 })();
+
+// -----------------------
+// 日本地図用ホバー表示（県名＋金額）
+// -----------------------
+(function () {
+  const svg = document.getElementById("japanMapSvg");
+  if (!svg) return;
+
+  // ツールチップ用の小さな div を作成
+  let tooltip = document.getElementById("mapTooltip");
+  if (!tooltip) {
+    tooltip = document.createElement("div");
+    tooltip.id = "mapTooltip";
+    Object.assign(tooltip.style, {
+      position: "absolute",
+      padding: "4px 8px",
+      background: "rgba(0,0,0,0.7)",
+      color: "#fff",
+      fontSize: "12px",
+      borderRadius: "4px",
+      pointerEvents: "none",
+      zIndex: 9999,
+      display: "none"
+    });
+    document.body.appendChild(tooltip);
+  }
+
+  // マウスを動かしたとき
+  svg.addEventListener("mousemove", (e) => {
+    const target = e.target.closest("g.prefecture");
+    if (!target || !target.dataset || !target.dataset.jpName) {
+      tooltip.style.display = "none";
+      return;
+    }
+
+    const name  = target.dataset.jpName;
+    const sales = Number(target.dataset.sales || 0);
+
+    tooltip.textContent = `${name}: ¥${sales.toLocaleString()}`;
+    tooltip.style.left = (e.pageX + 12) + "px";
+    tooltip.style.top  = (e.pageY + 12) + "px";
+    tooltip.style.display = "block";
+  });
+
+  // マウスが地図から出たら非表示
+  svg.addEventListener("mouseleave", () => {
+    tooltip.style.display = "none";
+  });
+})();
+
 
 
 // -----------------------
