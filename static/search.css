@@ -11,7 +11,7 @@ header {
     display: flex;
     align-items: center;
     padding: 0.5em 1em;
-    background: #1E1E2F;
+    background: #333;
     color: white;
     box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     position: fixed;
@@ -53,7 +53,7 @@ header h1 {
     left: -250px;
     width: 250px;
     height: 100%;
-    background-color: #1E1E2F;
+    background-color: #333;
     color: white;
     padding-top: 60px;
     transition: left 0.3s ease;
@@ -78,7 +78,7 @@ header h1 {
     transition: background 0.2s;
 }
 .sidebar li a:hover {
-    background-color: #343454;
+    background-color: #333;
     border-radius: 4px;
 }
 
