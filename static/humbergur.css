@@ -93,6 +93,28 @@ header h1 {
     transition: 0.3s;
 }
 
+/* ========== トップに戻るボタン (Back to Top) ========== */
+
+.back-to-top {
+    /* ヘッダー内で要素を右端に寄せるためにマージンを調整 */
+    margin-left: auto; 
+    
+    /* ボタンのスタイル */
+    background-color: transparent; /* 背景色なし */
+    color: white; /* 矢印の色 */
+    border: none;
+    font-size: 1.8em; /* 矢印を大きくする */
+    padding: 0 10px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    
+    /* ヘッダーが fixed なので、ボタン自体を fixed にする必要はない */
+}
+
+.back-to-top:hover {
+    color: #007bff; /* ホバーで色を変える */
+}
+
 /* ========== サイドバー ========== */
 .sidebar {
     position: fixed;
