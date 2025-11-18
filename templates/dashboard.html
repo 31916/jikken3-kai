@@ -3,118 +3,274 @@
 <head>
   <meta charset="utf-8">
   <title>経営戦略ダッシュボード</title>
-   <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
-
-   <link rel="stylesheet" href="{{ url_for('static', filename='humberger.css') }}">
-  
-  
+  <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='humberger.css') }}">
+  <!-- グラフ用ライブラリ -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <header>
-        <div id="menu-icon" class="menu-icon">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-        </div>
-        <h1 style="margin: 0; font-size: 1.5em;">経営戦略ダッシュボード</h1>
+    <div id="menu-icon" class="menu-icon">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+    <h1 style="margin: 0; font-size: 1.5em;">経営戦略ダッシュボード</h1>
   </header>
 
   <nav id="sidebar" class="sidebar">
-        <ul>
-            <li><a href="/">ホームページ</a></li>
-            <li><a href="/dashboard">経営戦略</a></li>
-            <li><a href="search.html">顧客ID検索</a></li>
-            <li><a href="stock.html">在庫リスト</a></li>
-        </ul>
+    <ul>
+      <li><a href="/">ホームページ</a></li>
+      <li><a href="/dashboard">経営戦略</a></li>
+      <li><a href="search.html">顧客ID検索</a></li>
+      <li><a href="stock.html">在庫リスト</a></li>
+    </ul>
   </nav>
-   <h1>📊 顧客・在庫分析ダッシュボード</h1>
-    
-    <h2>🔍 顧客属性フィルタ</h2>
-    <div class="filter-form">
-        <form method="GET" action="">
-            <label for="gender">性別:</label>
-            <select name="gender" id="gender" style="padding: 5px;">
-                <option value="">全て</option>
-                <option value="1" {% if gender_filter == '1' %}selected{% endif %}>男性</option>
-                <option value="2" {% if gender_filter == '2' %}selected{% endif %}>女性</option>
-            </select>
-            
-            <label for="min_age">年齢 (最小):</label>
-            <input type="number" name="min_age" id="min_age" value="{{ min_age_filter if min_age_filter is not none else '' }}" min="0" style="width: 80px; padding: 5px;">
-            
-            <label for="max_age">年齢 (最大):</label>
-            <input type="number" name="max_age" id="max_age" value="{{ max_age_filter if max_age_filter is not none else '' }}" min="0" style="width: 80px; padding: 5px;">
-            
-            <button type="submit" style="padding: 6px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">フィルタを適用 / 検索</button>
-            <button type="button" onclick="window.location.href='/'" style="padding: 6px 15px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">リセット</button>
-        </form>
-        
-        <div class="filter-status">
-            適用中の条件: 
-            {% if gender_filter %}**性別**: {{ gender_filter }} {% endif %}
-            {% if min_age_filter %}**最小年齢**: {{ min_age_filter }}歳 {% endif %}
-            {% if max_age_filter %}**最大年齢**: {{ max_age_filter }}歳 {% endif %}
-            {% if not gender_filter and min_age_filter is none and max_age_filter is none %}**なし** (全データ表示){% endif %}
-        </div>
-    </div>
 
-    <h2>📈 総合KPI (検索結果)</h2>
-    <div class="kpi-container">
-        <div class="kpi-box">
-            <h3>総顧客数</h3>
-            <div class="kpi-value">{{ total_customers | format_currency }}人</div>
-        </div>
-        <div class="kpi-box">
-            <h3>総売上金額</h3>
-            <div class="kpi-value">¥{{ total_sales | format_currency }}</div>
-        </div>
-        <div class="kpi-box">
-            <h3>平均顧客単価 (ARPU)</h3>
-            <div class="kpi-value">¥{{ avg_sales | format_currency }}</div>
-        </div>
-    </div>
-    
-    <h2>🏅 顧客ランキング (検索結果に基づく)</h2>
-    <div class="ranking-section">
-        <div class="ranking-box">
-            <h3>購入回数 TOP 10</h3>
-            <table>
-                <thead>
-                    <tr><th>順位</th><th>顧客ID</th><th>氏名</th><th>回数</th></tr>
-                </thead>
-                <tbody>
-                    {% for cust in top_freq %}
-                    <tr>
-                        <td>{{ loop.index }}</td>
-                        <td>{{ cust.customerid }}</td>
-                        <td>{{ cust.lastname }} {{ cust.firstname }}</td>
-                        <td>{{ cust.purchase_count | int }}回</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+  <h1>📊 顧客・在庫分析ダッシュボード</h1>
 
-        <div class="ranking-box">
-            <h3>合計購入金額 TOP 10</h3>
-            <table>
-                <thead>
-                    <tr><th>順位</th><th>顧客ID</th><th>氏名</th><th>金額</th></tr>
-                </thead>
-                <tbody>
-                    {% for cust in top_spend %}
-                    <tr>
-                        <td>{{ loop.index }}</td>
-                        <td>{{ cust.customerid }}</td>
-                        <td>{{ cust.lastname }} {{ cust.firstname }}</td>
-                        <td>¥{{ cust.total_spent | format_currency }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+  <!-- ===============================
+       🔍 顧客属性フィルタ
+  ================================ -->
+  <h2>🔍 顧客属性フィルタ</h2>
+  <div class="filter-form">
+    <form method="GET" action="">
+      <label for="gender">性別:</label>
+      <select name="gender" id="gender" style="padding: 5px;">
+        <option value="">全て</option>
+        <option value="1" {% if gender_filter == '1' %}selected{% endif %}>男性</option>
+        <option value="2" {% if gender_filter == '2' %}selected{% endif %}>女性</option>
+      </select>
 
+      <label for="min_age">年齢 (最小):</label>
+      <input type="number" name="min_age" id="min_age"
+             value="{{ min_age_filter if min_age_filter is not none else '' }}"
+             min="0" style="width: 80px; padding: 5px;">
+
+      <label for="max_age">年齢 (最大):</label>
+      <input type="number" name="max_age" id="max_age"
+             value="{{ max_age_filter if max_age_filter is not none else '' }}"
+             min="0" style="width: 80px; padding: 5px;">
+
+      <label for="area">地域:</label>
+      <select name="area" id="area" style="padding: 5px;">
+        <option value="">全て</option>
+        {% for a in area_list %}
+        <option value="{{ a }}" {% if area_filter == a %}selected{% endif %}>{{ a }}</option>
+        {% endfor %}
+      </select>
+
+      <button type="submit"
+              style="padding: 6px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        フィルタを適用 / 検索
+      </button>
+      <button type="button"
+              onclick="window.location.href='/dashboard'"
+              style="padding: 6px 15px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        リセット
+      </button>
+    </form>
+
+    <div class="filter-status">
+      適用中の条件:
+      {% set has_condition = false %}
+      {% if gender_filter %}
+        {% set has_condition = true %}
+        <strong>性別</strong>:
+        {% if gender_filter == '1' %}男性{% elif gender_filter == '2' %}女性{% else %}その他{% endif %}
+      {% endif %}
+      {% if min_age_filter is not none %}
+        {% set has_condition = true %}
+        &nbsp;/ <strong>最小年齢</strong>: {{ min_age_filter }}歳
+      {% endif %}
+      {% if max_age_filter is not none %}
+        {% set has_condition = true %}
+        &nbsp;/ <strong>最大年齢</strong>: {{ max_age_filter }}歳
+      {% endif %}
+      {% if area_filter %}
+        {% set has_condition = true %}
+        &nbsp;/ <strong>地域</strong>: {{ area_filter }}
+      {% endif %}
+      {% if not has_condition %}
+        <strong>なし</strong> (全データ表示)
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ===============================
+       📈 総合KPI
+  ================================ -->
+  <h2>📈 総合KPI (検索結果)</h2>
+  <div class="kpi-container">
+    <div class="kpi-box">
+      <h3>総顧客数</h3>
+      <div class="kpi-value">{{ total_customers | format_currency }}人</div>
+    </div>
+    <div class="kpi-box">
+      <h3>総売上金額</h3>
+      <div class="kpi-value">¥{{ total_sales | format_currency }}</div>
+    </div>
+    <div class="kpi-box">
+      <h3>平均顧客単価 (ARPU)</h3>
+      <div class="kpi-value">¥{{ avg_sales | format_currency }}</div>
+    </div>
+  </div>
+
+  <!-- ===============================
+       🗾 地域別売上サマリ
+  ================================ -->
+  <h2>🗾 地域別売上サマリ（グラフ / 表 切替）</h2>
+  <div style="margin-bottom: 10px;">
+    <button id="regionGraphBtn"
+            style="padding:6px 15px;background:#007bff;color:white;border:none;border-radius:4px;cursor:pointer;">
+      グラフで表示
+    </button>
+    <button id="regionTableBtn"
+            style="padding:6px 15px;background:#6c757d;color:white;border:none;border-radius:4px;cursor:pointer;">
+      表で表示
+    </button>
+  </div>
+
+  <!-- ▼ グラフ表示エリア -->
+  <div id="regionGraph" style="display:block;">
+    <canvas id="regionBarChart" style="max-width:650px;margin:auto;"></canvas>
+  </div>
+
+  <!-- ▼ 表表示エリア -->
+  <div id="regionTable" style="display:none;">
+    <table>
+      <thead>
+        <tr>
+          <th>地域</th>
+          <th>顧客数</th>
+          <th>総売上</th>
+          <th>顧客あたり平均売上</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in area_summary %}
+        <tr>
+          <td>{{ r.area }}</td>
+          <td>{{ r.customers }}</td>
+          <td>¥{{ r.total_sales | format_currency }}</td>
+          <td>¥{{ r.avg_sales_per_customer | format_currency }}</td>
+        </tr>
+        {% endfor %}
+        {% if area_summary|length == 0 %}
+        <tr><td colspan="4">該当データがありません。</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===============================
+       👥 セグメント分析（年代 × 性別）
+  ================================ -->
+  <h2>👥 セグメント分析（年代 × 性別）</h2>
+
+  <div style="margin-bottom: 10px;">
+    <button id="segGraphBtn"
+            style="padding:6px 15px;background:#007bff;color:white;border:none;border-radius:4px;cursor:pointer;">
+      グラフで表示
+    </button>
+    <button id="segTableBtn"
+            style="padding:6px 15px;background:#6c757d;color:white;border:none;border-radius:4px;cursor:pointer;">
+      表で表示
+    </button>
+  </div>
+
+  <!-- ▼ グラフ表示 -->
+  <div id="segGraph" style="display:block;">
+    <canvas id="segStackBar" height="120"></canvas>
+  </div>
+
+  <!-- ▼ 表表示 -->
+  <div id="segTable" style="display:none;">
+    <table>
+      <thead>
+        <tr>
+          <th>年代</th>
+          <th>性別</th>
+          <th>顧客数</th>
+          <th>総売上</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in age_gender %}
+        <tr>
+          <td>{{ s.age_group }}代</td>
+          <td>
+            {% if s.sex == 1 %}男性
+            {% elif s.sex == 2 %}女性
+            {% else %}その他{% endif %}
+          </td>
+          <td>{{ s.customer_count }}</td>
+          <td>¥{{ s.total_sales | format_currency }}</td>
+        </tr>
+        {% endfor %}
+        {% if age_gender|length == 0 %}
+        <tr><td colspan="4">該当データがありません。</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ===============================
+       🏅 顧客ランキング
+  ================================ -->
+  <h2>🏅 顧客ランキング (検索結果に基づく)</h2>
+  <div class="ranking-section">
+    <div class="ranking-box">
+      <h3>購入回数 TOP 10</h3>
+      <table>
+        <thead>
+          <tr><th>順位</th><th>顧客ID</th><th>氏名</th><th>回数</th></tr>
+        </thead>
+        <tbody>
+          {% for cust in top_freq %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ cust.customerid }}</td>
+            <td>{{ cust.lastname }} {{ cust.firstname }}</td>
+            <td>{{ cust.purchase_count | int }}回</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>+-
+
+    <div class="ranking-box">
+      <h3>合計購入金額 TOP 10</h3>
+      <table>
+        <thead>
+          <tr><th>順位</th><th>顧客ID</th><th>氏名</th><th>金額</th></tr>
+        </thead>
+        <tbody>
+          {% for cust in top_spend %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ cust.customerid }}</td>
+            <td>{{ cust.lastname }} {{ cust.firstname }}</td>
+            <td>¥{{ cust.total_spent | format_currency }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===============================
+       JS 読み込み
+  ================================ -->
   <script src="{{ url_for('static', filename='humberger.js') }}"></script>
+
+  <!-- Flask から JS へデータ受け渡し -->
+  <script>
+    window.regionDataFromFlask = {{ area_summary | tojson }};
+    window.segDataFromFlask = {{ age_gender | tojson }};
+  </script>
+
+  <!-- ダッシュボード用の描画ロジック（別ファイル） -->
+  <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 </body>
 </html>

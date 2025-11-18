@@ -39,6 +39,7 @@ def index():
     gender_filter = request.args.get('gender')
     min_age_filter = request.args.get('min_age', type=int)
     max_age_filter = request.args.get('max_age', type=int)
+    area_filter = request.args.get('area')
 
     try:
         cust = pd.read_csv(CUST_PATH, encoding='utf-8-sig')
@@ -63,9 +64,13 @@ def index():
             filtered_cust = filtered_cust[filtered_cust['age'] >= min_age_filter]
         if max_age_filter is not None:
             filtered_cust = filtered_cust[filtered_cust['age'] <= max_age_filter]
+    if area_filter and 'area' in filtered_cust.columns:
+        filtered_cust = filtered_cust[filtered_cust['area'] == area_filter]
+
 
     filtered_customer_ids = filtered_cust['customerid'].unique()
     filtered_order = order[order['customerid'].isin(filtered_customer_ids)]
+    area_list = sorted(cust['area'].dropna().unique())
 
     # 集計
     if not filtered_order.empty:
@@ -93,6 +98,47 @@ def index():
 
     top_freq = merged.sort_values("purchase_count", ascending=False).head(10)
     top_spend = merged.sort_values("total_spent", ascending=False).head(10)
+    
+    # --------------------------
+    # 地域別売上サマリ
+    # --------------------------
+    if not merged.empty and 'area' in merged.columns:
+        area_summary = (
+            merged.groupby('area')
+            .agg(
+                customers=('customerid', 'nunique'),
+                total_sales=('total_spent', 'sum')
+            )
+            .reset_index()
+        )
+        area_summary['avg_sales_per_customer'] = (
+            area_summary['total_sales'] / area_summary['customers']
+        )
+    else:
+        area_summary = pd.DataFrame(
+            columns=['area', 'customers', 'total_sales', 'avg_sales_per_customer']
+        )
+
+    # --------------------------
+    # 年代 × 性別 セグメント
+    # --------------------------
+    if not merged.empty and 'age' in merged.columns and 'sex' in merged.columns:
+        seg = merged.dropna(subset=['age', 'sex']).copy()
+        seg['age_group'] = (seg['age'] // 10) * 10  
+        age_gender = (
+            seg.groupby(['age_group', 'sex'])
+            .agg(
+                total_sales=('total_spent', 'sum'),
+                customer_count=('customerid', 'nunique')
+            )
+            .reset_index()
+            .sort_values(['age_group', 'sex'])
+        )
+    else:
+        age_gender = pd.DataFrame(
+            columns=['age_group', 'sex', 'total_sales', 'customer_count']
+        )
+
 
     # 在庫分析
     order_stock_merged = pd.merge(
@@ -124,7 +170,12 @@ def index():
         gender_filter=gender_filter,
         min_age_filter=min_age_filter,
         max_age_filter=max_age_filter,
+        area_filter=area_filter,
+        area_list=area_list,
+        area_summary=area_summary.to_dict(orient="records"),
+        age_gender=age_gender.to_dict(orient="records")
     )
+    
 # ==============================================================
 # 🏠 ① 新しいホームページ (ルート / )
 # ==============================================================
