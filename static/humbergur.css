@@ -140,8 +140,6 @@ header h1 {
 .main-content {
     transition: margin-left 0.3s ease;
     margin-left: 0;
-    /* ❌ 修正点: 元の menu.css にあった padding-top: 70px; の記述を削除。
-        ヘッダー分の余白は body の padding-top で管理する。 */
 }
 
 .sidebar.active ~ .main-content {
