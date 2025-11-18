@@ -121,18 +121,17 @@
   ================================ -->
   <h2>🗾 地域別売上サマリ（グラフ / 表 切替）</h2>
   <div style="margin-bottom: 10px;">
-    <button id="regionGraphBtn" class="toggle-btn active-btn">
-      グラフ
-    </button>
-    <button id="regionTableBtn" class="toggle-btn">
-      表
-    </button>
+    <button id="regionGraphBtn" class="toggle-btn active-btn">グラフ</button>
+    <button id="regionTableBtn" class="toggle-btn">表</button>
   </div>
 
   <!-- ▼ グラフ表示エリア -->
-  <div id="regionGraph" style="display:block;">
-    <canvas id="regionBarChart" style="max-width:650px;margin:auto;"></canvas>
-  </div>
+  <div id="regionGraph" style="display:block; width:100%; padding:20px 0;">
+    <div style="width:90%; max-width:1200px; margin:auto;">
+        <canvas id="regionBarChart"></canvas>
+    </div>
+</div>
+
 
   <!-- ▼ 表表示エリア -->
   <div id="regionTable" style="display:none;">
@@ -229,7 +228,7 @@
           {% endfor %}
         </tbody>
       </table>
-    </div>+-
+    </div>
 
     <div class="ranking-box">
       <h3>合計購入金額</h3>
