@@ -1,11 +1,3 @@
-const menuIcon = document.getElementById('menu-icon');
-const sidebar = document.getElementById('sidebar');
-
-menuIcon.addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-    menuIcon.classList.toggle('open');
-});
-
 // 顧客ID検索フォーム送信
 function goCustomer() {
     // 必要な要素を取得
