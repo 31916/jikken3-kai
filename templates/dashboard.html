@@ -92,7 +92,7 @@
         &nbsp;/ <strong>地域</strong>: {{ area_filter }}
       {% endif %}
       {% if not has_condition %}
-        <strong>なし</strong> (全データ表示)
+        なし (全データ表示)
       {% endif %}
     </div>
   </div>
@@ -116,49 +116,81 @@
     </div>
   </div>
 
-  <!-- ===============================
-       🗾 地域別売上サマリ
-  ================================ -->
-  <h2>🗾 地域別売上サマリ（グラフ / 表 切替）</h2>
-  <div style="margin-bottom: 10px;">
-    <button id="regionGraphBtn" class="toggle-btn active-btn">グラフ</button>
-    <button id="regionTableBtn" class="toggle-btn">表</button>
-  </div>
+<!-- ===============================
+    🗾 地域別売上サマリ
+================================ -->
+<h2>🗾 地域別売上サマリ（地図 / グラフ / 表 切替）</h2>
 
-  <!-- ▼ グラフ表示エリア -->
-  <div id="regionGraph" style="display:block; width:100%; padding:20px 0;">
-    <div style="width:90%; max-width:1200px; margin:auto;">
-        <canvas id="regionBarChart"></canvas>
-    </div>
+<div style="margin-bottom: 10px;">
+  <button id="regionMapBtn"   class="toggle-btn active-btn">地図</button>
+  <button id="regionGraphBtn" class="toggle-btn">グラフ</button>
+  <button id="regionTableBtn" class="toggle-btn">表</button>
 </div>
 
 
-  <!-- ▼ 表表示エリア -->
-  <div id="regionTable" style="display:none;">
-    <table>
-      <thead>
-        <tr>
-          <th>地域</th>
-          <th>顧客数</th>
-          <th>総売上</th>
-          <th>顧客あたり平均売上</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for r in area_summary %}
-        <tr>
-          <td>{{ r.area }}</td>
-          <td>{{ r.customers }}</td>
-          <td>¥{{ r.total_sales | format_currency }}</td>
-          <td>¥{{ r.avg_sales_per_customer | format_currency }}</td>
-        </tr>
-        {% endfor %}
-        {% if area_summary|length == 0 %}
-        <tr><td colspan="4">該当データがありません。</td></tr>
-        {% endif %}
-      </tbody>
-    </table>
+<!-- ▼ カラーレジェンド（地図表示中のみ表示） -->
+<div id="colorLegend" style="
+  display:none;
+  margin: 10px 0 20px;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 260px;
+">
+  <strong>売上カラー凡例</strong>
+  <div style="display:flex; align-items:center; margin-top:8px;">
+    <div style="width:24px; height:24px; background:rgb(0,100,255); margin-right:8px;"></div>
+    <span>最低売上</span>
   </div>
+  <div style="display:flex; align-items:center; margin-top:8px;">
+    <div style="width:24px; height:24px; background:rgb(255,0,0); margin-right:8px;"></div>
+    <span>最高売上</span>
+  </div>
+</div>
+
+<!-- ▼ 地図表示エリア -->
+<div id="regionMap" style="display:block; width:100%; padding:20px 0;">
+  <div style="width:90%; max-width:900px; margin:auto;">
+    {% include 'japan_map.svg' %}
+  </div>
+</div>
+
+<!-- ▼ グラフ表示エリア -->
+<div id="regionGraph" style="display:none; width:100%; padding:20px 0;">
+  <div style="width:90%; max-width:1200px; margin:auto;">
+    <canvas id="regionBarChart"></canvas>
+  </div>
+</div>
+
+<!-- ▼ 表表示エリア -->
+<div id="regionTable" style="display:none;">
+  <table>
+    <thead>
+      <tr>
+        <th>地域</th>
+        <th>顧客数</th>
+        <th>総売上</th>
+        <th>顧客あたり平均売上</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in area_summary %}
+      <tr>
+        <td>{{ r.area }}</td>
+        <td>{{ r.customers }}</td>
+        <td>¥{{ r.total_sales | format_currency }}</td>
+        <td>¥{{ r.avg_sales_per_customer | format_currency }}</td>
+      </tr>
+      {% endfor %}
+      {% if area_summary|length == 0 %}
+      <tr><td colspan="4">該当データがありません。</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+  
 
   <!-- ===============================
        👥 セグメント分析（年代 × 性別）
