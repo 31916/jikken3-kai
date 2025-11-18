@@ -16,11 +16,13 @@ const regionData = window.regionDataFromFlask;
             datasets: [{
                 label: "地域別売上",
                 data: sales,
-                borderWidth: 1
+                borderWidth: 1,
+                maxBarThickness: 50
             }]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 y: {
                     ticks: {
