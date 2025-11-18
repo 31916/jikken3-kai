@@ -28,6 +28,22 @@ table {
     margin-top: 15px; background-color: #ffffff; 
     box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
 }
+
+/* テーブルの基本スタイル */
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 15px; 
+    background-color: #ffffff; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+}
+
+/* 奇数行（low-stock除く）を薄グレーに */
+table tbody tr:nth-child(odd):not(.low-stock) { 
+    background-color: #f0f0f0; 
+}
+
+
 th, td { 
     border: 1px solid #ddd; 
     padding: 10px; 
