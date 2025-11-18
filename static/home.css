@@ -13,7 +13,7 @@ body {
         /* 濃いオーバーレイ (テキストを見やすくするため) */
         linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), 
         /* 抽象的なデータ分析のプレースホルダー画像 */
-        url('https://picsum.photos/seed/analytics_slide/1920/1080'); 
+        url('technology abstract background.png'); 
     
     background-size: cover; 
     background-position: center; 
