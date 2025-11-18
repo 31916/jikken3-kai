@@ -82,3 +82,8 @@ th {
 #segmentationGraph, #segmentationTable, #regionGraph, #regionTable {
     margin-top: 20px;
 }
+
+#japanMapSvg {
+  background-color: #b4b4b4c0;
+}
+
