@@ -219,14 +219,16 @@ const segData = window.segDataFromFlask;
   const min = Math.min(...values);
   const max = Math.max(...values) || 1;
 
-  // 色決定（青 → 赤）
   function getColor(val) {
-    const t = (val - min) / (max - min || 1);
-    const r = Math.round(255 * t);
-    const g = Math.round(100 * (1 - t));
-    const b = Math.round(255 * (1 - t));
+    const t = (val - min) / (max - min || 1); // 0〜1
+    
+    const r = Math.round(213 - 140 * t); // 213 → 73
+    const g = Math.round(255 - 80 * t);  // 255 → 175
+    const b = Math.round(204 - 154 * t); // 204 → 50
+
     return `rgb(${r}, ${g}, ${b})`;
   }
+
 
   // 各県を塗る
   data.forEach(region => {
@@ -247,7 +249,7 @@ const segData = window.segDataFromFlask;
   });
 
   svg.querySelectorAll("title").forEach(t => t.remove());
-  
+
 })();
 
 // -----------------------
