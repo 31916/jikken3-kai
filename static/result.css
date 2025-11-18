@@ -1,0 +1,77 @@
+/* ----------------------------------
+   全体フォントとテーブル基本設定
+---------------------------------- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2em;
+}
+
+/* ----------------------------------
+   テーブルヘッダー
+---------------------------------- */
+table thead th {
+    background-color: #333 !important; /* 背景色 */
+    color: #fff !important;           /* 文字色 */
+    padding: 0.6em 1em;
+    text-align: left;
+    font-weight: bold;
+    border: 1px solid #ccc;
+}
+
+/* ----------------------------------
+   テーブルボディ
+---------------------------------- */
+table tbody td {
+    border: 1px solid #ccc;
+    padding: 0.5em 1em;
+}
+
+/* ----------------------------------
+   奇数行の背景色（全商品テーブル向け）
+---------------------------------- */
+table tbody tr:nth-child(odd):not(.low-stock) {
+    background-color: #f0f0f0; /* 薄グレー */
+}
+
+/* ----------------------------------
+   低在庫ハイライト
+---------------------------------- */
+.low-stock {
+    background-color: #fff !important; /* 少し濃い薄グレー */
+}
+
+/* ----------------------------------
+   検索フォーム整形
+---------------------------------- */
+.search-form {
+    margin: 1em 0 2em;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+
+.search-form input,
+.search-form select,
+.search-form button {
+    padding: 0.5em 0.7em;
+    font-size: 0.9em;
+}
+
+.search-form button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.search-form button:hover {
+    background-color: #555;
+}
