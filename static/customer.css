@@ -70,6 +70,13 @@ th, td {
     text-align: center;
     border-bottom: 1px solid #ccc;
 }
+thead th,
+thead tr {
+    /* ホバー時も含めて元の背景色(#333)と文字色(white)を固定 */
+    background-color: #333 !important;
+    color: white !important;
+    cursor: default !important; /* カーソルをデフォルトに戻す */
+}
 
 /* ヘッダー行の hover を無効化 */
 thead tr:hover,
