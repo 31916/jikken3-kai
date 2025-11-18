@@ -66,3 +66,19 @@ th {
 .risk-row { 
     background-color: #fff0f0; 
 } 
+.toggle-btn {
+    padding: 6px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+    background-color: #6c757d; /* 非アクティブはグレー */
+    margin-right: 5px;
+}
+
+.active-btn {
+    background-color: #007bff !important; /* アクティブは青 */
+}
+#segmentationGraph, #segmentationTable, #regionGraph, #regionTable {
+    margin-top: 20px;
+}

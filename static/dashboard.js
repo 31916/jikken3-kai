@@ -90,18 +90,53 @@ const segData = window.segDataFromFlask;
     });
 })();
 
-// 表・グラフ切り替え（セグメント）
+(function () {
+    const graph = document.getElementById("regionGraph");
+    const table = document.getElementById("regionTable");
+    const graphBtn = document.getElementById("regionGraphBtn");
+    const tableBtn = document.getElementById("regionTableBtn");
+
+    if (!graph || !table) return;
+
+    graphBtn.onclick = () => {
+        graph.style.display = "block";
+        table.style.display = "none";
+
+        graphBtn.classList.add("active-btn");
+        tableBtn.classList.remove("active-btn");
+    };
+
+    tableBtn.onclick = () => {
+        graph.style.display = "none";
+        table.style.display = "block";
+
+        tableBtn.classList.add("active-btn");
+        graphBtn.classList.remove("active-btn");
+    };
+})();
+
 (function () {
     const graph = document.getElementById("segGraph");
     const table = document.getElementById("segTable");
+    const graphBtn = document.getElementById("segGraphBtn");
+    const tableBtn = document.getElementById("segTableBtn");
+
     if (!graph || !table) return;
 
-    document.getElementById("segGraphBtn").onclick = () => {
+    graphBtn.onclick = () => {
         graph.style.display = "block";
         table.style.display = "none";
+
+        graphBtn.classList.add("active-btn");
+        tableBtn.classList.remove("active-btn");
     };
-    document.getElementById("segTableBtn").onclick = () => {
+
+    tableBtn.onclick = () => {
         graph.style.display = "none";
         table.style.display = "block";
+
+        tableBtn.classList.add("active-btn");
+        graphBtn.classList.remove("active-btn");
     };
 })();
+

@@ -96,8 +96,8 @@ def index():
     total_sales = merged["total_spent"].sum()
     avg_sales = total_sales / total_customers if total_customers else 0
 
-    top_freq = merged.sort_values("purchase_count", ascending=False).head(10)
-    top_spend = merged.sort_values("total_spent", ascending=False).head(10)
+    top_freq = merged.sort_values("purchase_count", ascending=False)
+    top_spend = merged.sort_values("total_spent", ascending=False)
     
     # --------------------------
     # 地域別売上サマリ
