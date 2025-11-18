@@ -73,6 +73,17 @@ header h1 {
     margin-right: 15px;
     display: inline-block;
 }
+/* --- ハンバーガーのアニメーション --- */
+.menu-icon.active .bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+.menu-icon.active .bar:nth-child(2) {
+    opacity: 0;
+}
+.menu-icon.active .bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
 
 .menu-icon .bar {
     width: 25px;
