@@ -8,7 +8,6 @@
 
 ## 1. ダッシュボード表示（/dashboard）
 
-```mermaid
 sequenceDiagram
     autonumber
     actor User
