@@ -7,7 +7,7 @@
 ---
 
 ## 1. ダッシュボード表示（/dashboard）
-
+```mermaid
 sequenceDiagram
     autonumber
     actor User
@@ -32,6 +32,8 @@ sequenceDiagram
     Browser ->> Browser: Chart.js でグラフ描画
     Browser ->> Browser: SVG 日本地図に色を適用
 
+## 2. 顧客詳細ページ（/customer/ID）
+```mermaid
 sequenceDiagram
     autonumber
     actor User
@@ -51,6 +53,8 @@ sequenceDiagram
     Flask -->> Browser: customer.html + グラフHTML
     Browser ->> Browser: 注文履歴グラフ描画
 
+## 3. 在庫ページ（/stock.html）
+```mermaid
 sequenceDiagram
     autonumber
     actor User
