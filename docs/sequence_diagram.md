@@ -31,6 +31,7 @@ sequenceDiagram
     Flask -->> Browser: dashboard.html + JSONデータ
     Browser ->> Browser: Chart.js でグラフ描画
     Browser ->> Browser: SVG 日本地図に色を適用
+```
 
 ## 2. 顧客詳細ページ（/customer/ID）
 ```mermaid
@@ -52,6 +53,7 @@ sequenceDiagram
 
     Flask -->> Browser: customer.html + グラフHTML
     Browser ->> Browser: 注文履歴グラフ描画
+```
 
 ## 3. 在庫ページ（/stock.html）
 ```mermaid
@@ -74,3 +76,4 @@ sequenceDiagram
     Flask ->> Flask: 商品 × 注文データのマージ
     Flask ->> Flask: 在庫率（stock / ordered）を計算
     Flask -->> Browser: stock.html + データ表示
+```
