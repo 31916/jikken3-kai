@@ -13,13 +13,16 @@
 
 | カラム名        | 型       | 説明                |
 |-----------------|----------|---------------------|
-| customerid      | int      | 顧客ID（主キー）   |
-| lastname        | str      | 姓                 |
-| firstname       | str      | 名                 |
-| birthday        | date     | 生年月日           |
-| sex             | int      | 性別 (1=男,2=女) |
-| age             | int      | 年齢               |
+| customerid      | str      | 顧客ID（主キー）   |
+| lastname        | str      | 苗字                 |
+| firstname       | str      | 名前               |
+| areacode        | int      | 都道府県判別用コード      |
 | area            | str      | 都道府県           |
+| birthday        | date     | 生年月日           |
+| age             | int      | 年齢               |
+| sex             | int      | 性別 (1=男,2=女) |
+| totalprice      | int      | 注文合計金額|
+| sex             | date      | 最終注文日 |
 
 ---
 
@@ -27,14 +30,14 @@
 
 | カラム名        | 型       | 説明                   |
 |----------------|-----------|------------------------|
+| customerid     | str       | 顧客ID（外部キー）     |
 | orderdate      | date      | 注文日                 |
 | orderno        | str       | 注文番号               |
-| customerid     | int       | 顧客ID（外部キー）     |
-| itemcode       | str       | 商品コード             |
-| itemcate       | str       | 商品カテゴリ           |
-| itemprice      | int       | 単価                   |
-| ordernum       | int       | 注文数                 |
-| orderprice     | int       | 注文金額（単価×数量） |
+| itemprice      | int       | 商品価格                |
+| orderitem      | str       | 商品コード |
+| orderitemcate  | str       | 商品カテゴリ   |
+| ordernum       | int       | 注文数           |
+| orderprice     | int       | 合計注文金額 |
 
 ---
 
@@ -42,8 +45,8 @@
 
 | カラム名     | 型   | 説明      |
 |--------------|------|-----------|
-| itemcode     | str  | 商品コード |
-| stock        | int  | 現在庫数   |
+| item     | str  | 商品コード |
+| stock        | int  | 在庫数   |
 
 ---
 
@@ -51,9 +54,9 @@
 
 | カラム名       | 型   | 説明               |
 |----------------|------|--------------------|
-| itemcode       | str  | 商品コード         |
-| itemname       | str  | 商品名             |
+| item       | str  | 商品コード         |
 | itemcate       | str  | 商品カテゴリ       |
+| itemprice       | int  | 商品価格             |
 
 ---
 
