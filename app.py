@@ -156,25 +156,6 @@ def index():
             columns=['age_group', 'sex', 'total_sales', 'customer_count']
         )
 
-
-    # 在庫分析
-    order_stock_merged = pd.merge(
-        filtered_order,
-        item_stock[['itemcode', 'stock']],
-        on='itemcode',
-        how='left'
-    ).drop_duplicates(subset=['orderdate', 'orderno', 'itemcode'])
-
-    item_analysis = (
-        order_stock_merged.groupby('itemcode')
-        .agg(total_ordered=('ordernum', 'sum'), current_stock=('stock', 'max'))
-        .reset_index()
-    )
-    item_analysis['stock_ratio'] = item_analysis['current_stock'] / item_analysis['total_ordered']
-    low_stock_risk = item_analysis[
-        (item_analysis['total_ordered'] > 0) & (item_analysis['stock_ratio'] < 0.1)
-    ].sort_values('stock_ratio').head(5)
-
     return render_template(
         "dashboard.html",
         total_customers=int(total_customers),
@@ -182,8 +163,6 @@ def index():
         avg_sales=int(avg_sales),
         top_freq=top_freq.to_dict(orient="records"),
         top_spend=top_spend.to_dict(orient="records"),
-        low_stock_risk=low_stock_risk.to_dict(orient="records"),
-        item_analysis=item_analysis.to_dict(orient="records"),
         gender_filter=gender_filter,
         min_age_filter=min_age_filter,
         max_age_filter=max_age_filter,
@@ -200,9 +179,6 @@ def index():
 def home():
     # データを必要としないシンプルな home.html をレンダリング
     return render_template("index.html") 
-# ------------------------------
-# ② 個別顧客詳細ページ
-# ------------------------------
 # ------------------------------
 # ② 個別顧客詳細ページ
 # ------------------------------
@@ -239,9 +215,9 @@ def customer_detail(customer_id):
 
     customer_info = cust[cust['customerid'].astype(str) == str(customer_id)].to_dict(orient='records')[0]
 
-    # ← ここを修正
+    # テンプレートにデータを渡してレンダリング
     return render_template(
-        'customer.html',  # ← customer_detail.html から変更
+        'customer.html',  
         customer_info=customer_info,
         total_orders=total_orders,
         total_spent=total_spent,
@@ -294,7 +270,7 @@ def stock_page():
         axis=1
     )
 
-    # 🔹 在庫率10%未満の商品（上位5件） → 検索無関係
+    # 🔹 在庫率10%未満の商品（上位5件） →ここは表示数変更可能!
     low_stock_risk = (
         item_analysis[(item_analysis['total_ordered'] > 0) & (item_analysis['stock_ratio'] < 0.1)]
         .sort_values('stock_ratio')
