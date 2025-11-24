@@ -14,8 +14,6 @@
 
 ## 画面遷移図
 
-（Mermaid例）
-
 ```mermaid
 flowchart TD
 
@@ -25,3 +23,5 @@ A --> D[在庫一覧 /stock.html]
 
 B --> E[顧客詳細 /customer/<id>]
 C --> E
+
+```
