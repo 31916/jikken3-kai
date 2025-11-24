@@ -17,10 +17,36 @@
 ```mermaid
 flowchart TD
 
-A[ホーム /] --> B[ダッシュボード /dashboard]
-A --> C[検索 /search.html]
-A --> D[在庫一覧 /stock.html]
+%% 画面ノード
+A[ホーム /]
+B[ダッシュボード /dashboard]
+C[顧客ID検索 /search.html]
+D[在庫一覧 /stock.html]
+E[顧客詳細 /customer/<id>]
 
-C --> E[顧客詳細 /customer/<id>]
+%% 共通ナビ（全画面に常駐するUI）
+H[共通ハンバーガーメニュー<br/>（header + sidebar）]
+
+%% ホームからの遷移
+A --> B
+A --> C
+A --> D
+
+%% 共通ナビからの遷移（全ページで可能）
+H --> A
+H --> B
+H --> C
+H --> D
+
+%% 各ページに共通ナビがあることを明示（点線＝UI常駐）
+A -.常駐.-> H
+B -.常駐.-> H
+C -.常駐.-> H
+D -.常駐.-> H
+E -.常駐.-> H
+
+%% 個別遷移
+C --> E
+
 
 ```
