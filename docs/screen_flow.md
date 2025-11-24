@@ -21,7 +21,6 @@ A[ホーム /] --> B[ダッシュボード /dashboard]
 A --> C[検索 /search.html]
 A --> D[在庫一覧 /stock.html]
 
-B --> E[顧客詳細 /customer/<id>]
-C --> E
+C --> E[顧客詳細 /customer/<id>]
 
 ```

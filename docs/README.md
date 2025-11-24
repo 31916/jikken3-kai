@@ -29,20 +29,13 @@
   - `cust.csv`：顧客情報  
   - `order.csv`：購入履歴  
   - `itemstock.csv`：在庫情報  
+  - `item.csv`: 商品情報
 
 - **HTML + CSS + JavaScript**  
   - Chart.js によるグラフ描画  
   - SVG 日本地図の動的塗り分け  
   - Plotly で顧客履歴グラフ作成  
   - ハンバーガーメニュー（CSS + JS）
-
----
-
-# 🔗 GitHub リポジトリ
-
-開発時のソースコードおよびテンプレートは以下にて管理：
-
-👉 **https://github.com/あなたのURL**
 
 ---
 
