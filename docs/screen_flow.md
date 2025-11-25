@@ -8,10 +8,10 @@
 ## 画面一覧
 
 - **① ホームページ（/）**
-- **② ダッシュボード（/dashboard）**
+- **② ダッシュボード（/dashboard.html）**
 - **③ 顧客 ID 検索（/search.html）**
 - **④ 在庫リスト（/stock.html）**
-- **⑤ 顧客詳細ページ（/customer/<id>）**
+- **⑤ 顧客詳細ページ（/customer/<id>.html）**
 
 ---
 
@@ -57,7 +57,7 @@ flowchart TD
 サイドバーには以下のリンクが含まれており、ユーザーはどの画面からでも即座にページ移動できる。
 
 - **ホームページ（/）**
-- **ダッシュボード（/dashboard）**
+- **ダッシュボード（/dashboard.html）**
 - **顧客ID検索（/search.html）**
 - **在庫リスト（/stock.html）**
 
