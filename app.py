@@ -330,6 +330,14 @@ def search_page():
     return render_template('search.html')
 
 # ------------------------------
+# 404対応
+# ------------------------------
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
+
+
+# ------------------------------
 # Flask 実行
 # ------------------------------
 if __name__ == "__main__":
