@@ -77,3 +77,17 @@ sequenceDiagram
     Flask ->> Flask: 在庫率（stock / ordered）を計算
     Flask -->> Browser: stock.html + データ表示
 ```
+
+## 4. 404 Not Found
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User
+
+    User ->> Browser: 誤ったURLにアクセス
+    Browser ->> Flask: GET /unknown
+
+    Flask ->> Flask: ルート確認（存在しない）
+    Flask -->> Browser: 404.html（エラー画面）
+    Browser ->> User: 404 ページ表示
+```
